@@ -1,6 +1,8 @@
-package iag1.com;
+package iag1.com.utils;
 
 import au.com.bytecode.opencsv.CSVReader;
+import iag1.com.Bar;
+import iag1.com.Item;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -8,6 +10,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -52,4 +55,25 @@ public class FileLoader {
         }
         return item;
     }
+
+    public List<Bar> readBars() throws IOException, ParseException {
+        Bar bar;
+        List<Bar> barList = new ArrayList<Bar>();
+        List<String> headerList = Arrays.asList(csvReader.readNext());
+        String [] nextLine;
+        while ((nextLine = csvReader.readNext()) != null) {
+            bar = new Bar();
+            bar.setDate(fmt.parse(nextLine[headerList.indexOf("Date")]));
+            bar.setOpen(new Double(nextLine[headerList.indexOf("Open")]));
+            bar.setHigh(new Double(nextLine[headerList.indexOf("High")]));
+            bar.setLow(new Double(nextLine[headerList.indexOf("Low")]));
+            bar.setClose(new Double(nextLine[headerList.indexOf("Close")]));
+            bar.setVolume(new Long(nextLine[headerList.indexOf("Volume")]));
+            bar.setAdjClose(new Double(nextLine[headerList.indexOf("Adj Close")]));
+            barList.add(bar);
+            System.out.println(bar.toString());
+        }
+        return barList;
+    }
+
 }

@@ -3,6 +3,7 @@ package iag1.com;
 import com.tictactec.ta.lib.Core;
 import com.tictactec.ta.lib.MInteger;
 import com.tictactec.ta.lib.RetCode;
+import iag1.com.utils.FileLoader;
 
 import java.io.BufferedReader;
 import java.io.IOException;
