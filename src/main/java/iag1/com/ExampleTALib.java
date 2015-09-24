@@ -3,6 +3,7 @@ package iag1.com;
 import com.tictactec.ta.lib.Core;
 import com.tictactec.ta.lib.MInteger;
 import com.tictactec.ta.lib.RetCode;
+import iag1.com.repository.EndOfDay;
 import iag1.com.utils.FileLoader;
 
 import java.io.BufferedReader;
@@ -32,13 +33,19 @@ public class ExampleTALib {
         MInteger begin = new MInteger();
         MInteger length = new MInteger();
         Item[] items = new Item[getWatchList().size()];
+        EndOfDay endOfDay = new EndOfDay();
 
         int index = 0;
+        List<Bar> barList;
+        Item item;
         for(WatchList watch: getWatchList()) {
-            items[index++] = getBars(watch.getSymbol(), watch.getName());
+            barList = endOfDay.all(watch.getSymbol());
+            item = new Item(watch.getSymbol(), watch.getSymbol());
+            item.setBars(barList);
+            items[index++] = item;
         }
 
-        Item item = getBars("VSTO", "Vista ...");
+        item = getBars("VSTO", "Vista ...");
 
         // Sort by date in descending order
         item.getBars().sort(new Comparator<Bar>() {
