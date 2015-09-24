@@ -14,6 +14,10 @@ public class Item {
     private String name;
     private List<Bar> bars;
 
+    public Item() {
+        // Empty
+    }
+
     public Item(String symbol, String name) {
         this.symbol = symbol;
         this.name = name;

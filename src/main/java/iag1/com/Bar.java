@@ -13,16 +13,20 @@ public class Bar {
     private Double high;
     private Double low;
     private Double close;
-    private Long volumne;
+    private Long volume;
     private Double adjClose;
 
-    public Bar(Date date, Double open, Double high, Double low, Double close, Long volumne, Double adjClose) {
+    public Bar() {
+        // Empty
+    }
+
+    public Bar(Date date, Double open, Double high, Double low, Double close, Long volume, Double adjClose) {
         this.date = date;
         this.open = open;
         this.high = high;
         this.low = low;
         this.close = close;
-        this.volumne = volumne;
+        this.volume = volume;
         this.adjClose = adjClose;
     }
 
@@ -70,12 +74,12 @@ public class Bar {
         this.close = close;
     }
 
-    public Long getVolumne() {
-        return volumne;
+    public Long getVolume() {
+        return volume;
     }
 
-    public void setVolumne(Long volumne) {
-        this.volumne = volumne;
+    public void setVolume(Long volume) {
+        this.volume = volume;
     }
 
     public Double getAdjClose() {
@@ -94,7 +98,7 @@ public class Bar {
         sb.append(", high=").append(high);
         sb.append(", low=").append(low);
         sb.append(", close=").append(close);
-        sb.append(", volumne=").append(volumne);
+        sb.append(", volume=").append(volume);
         sb.append(", adjClose=").append(adjClose);
         sb.append('}');
         return sb.toString();

@@ -5,12 +5,15 @@ import au.com.bytecode.opencsv.CSVReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
 
 /**
+ * File Loader.
+ *
  * Created by dqromney on 9/15/15.
  */
 public class FileLoader {
@@ -22,6 +25,10 @@ public class FileLoader {
 
     public FileLoader(String pImportDir, String pFilename) throws FileNotFoundException {
         csvReader = new CSVReader(new FileReader(pImportDir + '/' + pFilename), ',','"',0);
+    }
+
+    public FileLoader(Reader pReader) throws FileNotFoundException {
+        csvReader = new CSVReader(pReader, ',', '"', 0);
     }
 
     public Item read() throws IOException, ParseException {
@@ -39,10 +46,9 @@ public class FileLoader {
             bar.setLow(new Double(nextLine[headerList.indexOf("Low")]));
             bar.setClose(new Double(nextLine[headerList.indexOf("Close")]));
             bar.setVolume(new Long(nextLine[headerList.indexOf("Volume")]));
-            bar.setLow(new Double(nextLine[headerList.indexOf("Adj Close")]));
+            bar.setAdjClose(new Double(nextLine[headerList.indexOf("Adj Close")]));
             item.getBars().add(bar);
             System.out.println(bar.toString());
-            bar = null;
         }
         return item;
     }
