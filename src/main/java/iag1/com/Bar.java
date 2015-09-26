@@ -1,5 +1,6 @@
 package iag1.com;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -15,6 +16,8 @@ public class Bar {
     private Double close;
     private Long volume;
     private Double adjClose;
+
+    private Double rsi;
 
     public Bar() {
         // Empty
@@ -90,16 +93,26 @@ public class Bar {
         this.adjClose = adjClose;
     }
 
+    public Double getRsi() {
+        return rsi;
+    }
+
+    public void setRsi(Double rsi) {
+        this.rsi = rsi;
+    }
+
     @Override
     public String toString() {
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
         final StringBuilder sb = new StringBuilder("Bar{");
-        sb.append("date=").append(date);
+        sb.append("date=").append(fmt.format(date));
         sb.append(", open=").append(open);
         sb.append(", high=").append(high);
         sb.append(", low=").append(low);
         sb.append(", close=").append(close);
         sb.append(", volume=").append(volume);
         sb.append(", adjClose=").append(adjClose);
+        sb.append(", rsi=").append(rsi);
         sb.append('}');
         return sb.toString();
     }

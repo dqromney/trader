@@ -35,7 +35,7 @@ public class FileLoader {
     }
 
     public Item read() throws IOException, ParseException {
-        Item item = new Item("UNKNOWN", "DESC");
+        Item item = new Item("UNKNOWN", "DESC", "EXCHANGE");
         List<String> headerList = Arrays.asList(csvReader.readNext());
         String [] nextLine;
         while ((nextLine = csvReader.readNext()) != null) {

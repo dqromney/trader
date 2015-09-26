@@ -3,20 +3,16 @@ package iag1.com;
 import com.tictactec.ta.lib.Core;
 import com.tictactec.ta.lib.MInteger;
 import com.tictactec.ta.lib.RetCode;
-import iag1.com.repository.EndOfDay;
-import iag1.com.utils.FileLoader;
+import iag1.com.service.DataService;
+import iag1.com.types.SortOrder;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
-public class ExampleTALib {
+public class Main {
 
     /**
      * The total number of periods to generate data for.
@@ -29,30 +25,21 @@ public class ExampleTALib {
     public static final int PERIODS_AVERAGE = 14;
 
     public static void main(String[] args) throws ParseException, IOException {
+        DataService dataService = new DataService();
+
+        List<Bar> barList;
+        for(WatchList watch: getWatchList()) {
+            barList = dataService.getAllHistory(watch.getSymbol(), SortOrder.DESC);
+            getRsi(new Item(watch.getSymbol(), watch.getName(), watch.getExchange(), barList));
+        }
+    }
+
+    // TODO Put this out to an analytics package
+    private static void getRsi(Item item) {
         SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
         MInteger begin = new MInteger();
         MInteger length = new MInteger();
-        Item[] items = new Item[getWatchList().size()];
-        EndOfDay endOfDay = new EndOfDay();
 
-        int index = 0;
-        List<Bar> barList;
-        Item item;
-        for(WatchList watch: getWatchList()) {
-            barList = endOfDay.all(watch.getSymbol());
-            item = new Item(watch.getSymbol(), watch.getSymbol());
-            item.setBars(barList);
-            items[index++] = item;
-        }
-
-        item = getBars("VSTO", "Vista ...");
-
-        // Sort by date in descending order
-        item.getBars().sort(new Comparator<Bar>() {
-            public int compare(Bar o1, Bar o2) {
-                return o1.getDate().compareTo(o2.getDate());
-            }
-        });
         double[] closePrice = new double[item.getBars().size()];
         double[] out = new double[item.getBars().size()];
 
@@ -64,6 +51,8 @@ public class ExampleTALib {
         // RetCode retCode = c.sma(0, closePrice.length - 1, closePrice, PERIODS_AVERAGE, begin, length, out);
         RetCode retCode = c.rsi(0, item.getBars().size() - 1, closePrice, PERIODS_AVERAGE, begin, length, out);
         if (retCode == RetCode.Success) {
+
+            System.out.println(String.format("%1$s (%2$s) - %3$s", item.getSymbol(), item.getName(), item.getExchange()));
             System.out.println("Output Begin:" + begin.value);
             System.out.println("Output Begin:" + length.value);
 
@@ -75,22 +64,13 @@ public class ExampleTALib {
                 line.append(String.format("%1$2.4f", closePrice[i]));
                 line.append("\trsi=");
                 line.append(String.format("%1$2.2f", out[i - begin.value]));
-                System.out.println(line.toString());
+                item.getBars().get(i - begin.value).setRsi(out[i - begin.value]);
+                System.out.println(item.getBars().get(i - begin.value));
             }
 
         } else {
             System.out.println("Error");
         }
-    }
-
-    private static Item getBars(String pSymbol, String pSymbolName) throws IOException, ParseException {
-        URL url = new URL("http://ichart.yahoo.com/table.csv?s=" +  pSymbol);
-        FileLoader fileLoader = new FileLoader(new BufferedReader(new InputStreamReader(url.openStream())));
-        Item item = fileLoader.read();
-        item.setName(pSymbolName);
-        item.setSymbol(pSymbol);
-
-        return item;
     }
 
     private static List<WatchList> getWatchList() {
