@@ -1,6 +1,7 @@
 package iag1.com.repository;
 
 import iag1.com.Bar;
+import iag1.com.types.AppConfig;
 import iag1.com.utils.FileLoader;
 
 import java.io.BufferedReader;
@@ -25,7 +26,7 @@ public class EndOfDay {
      * @throws ParseException
      */
     public List<Bar> all(final String pSymbol) throws IOException, ParseException {
-        URL url = new URL("http://ichart.yahoo.com/table.csv?s=" + pSymbol);
+        URL url = new URL(AppConfig.YAHOO_EOD_WEB_SERVICE_URL.getValue() + pSymbol);
         FileLoader fileLoader = new FileLoader(new BufferedReader(new InputStreamReader(url.openStream())));
         return fileLoader.readBars();
     }

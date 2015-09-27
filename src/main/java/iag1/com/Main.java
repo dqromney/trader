@@ -1,10 +1,11 @@
 package iag1.com;
 
-import com.tictactec.ta.lib.Core;
-import com.tictactec.ta.lib.MInteger;
-import com.tictactec.ta.lib.RetCode;
+import iag1.com.analytics.Technical;
 import iag1.com.service.DataService;
+import iag1.com.types.AppConfig;
 import iag1.com.types.SortOrder;
+import iag1.com.types.TechnicalEnums;
+import iag1.com.utils.Email;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -26,58 +27,100 @@ public class Main {
 
     public static void main(String[] args) throws ParseException, IOException {
         DataService dataService = new DataService();
-
+        StringBuilder sb = new StringBuilder();
         List<Bar> barList;
+        Item item;
+
         for(WatchList watch: getWatchList()) {
-            barList = dataService.getAllHistory(watch.getSymbol(), SortOrder.DESC);
-            getRsi(new Item(watch.getSymbol(), watch.getName(), watch.getExchange(), barList));
+            barList = dataService.getAllHistory(watch.getSymbol(), SortOrder.ASC);
+            barList = Technical.rsi(barList, TechnicalEnums.RSI_PERIOD_AVERAGE_DEFAULT.getValue());
+            item = new Item(watch.getSymbol(), watch.getName(), watch.getExchange(), barList);
+            displayItem(item, 5);
+            sb.append(generateItem(item, 5));
+        }
+        // Email report to myself
+        Email.sendEmail("dqromney@gmail.com", "Daily Stock RSI Report", sb.toString());
+    }
+
+    private static void displayItem(Item pItem, Integer pLength) {
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+        System.out.println(String.format("\n%1$s - %2$s (%3$s) - %4$d Bars", pItem.getSymbol(), pItem.getName(), pItem.getExchange(), pItem.getBars().size()));
+        System.out.println(
+                String.format("%1$s\t\t%2$s\t%3$s\t%4$s\t\t%5$s\t%6$s\t%7$s\t%8$s",
+                        AppConfig.YAHOO_EOD_HEADER_DATE.getValue(),
+                        AppConfig.YAHOO_EOD_HEADER_OPEN.getValue(),
+                        AppConfig.YAHOO_EOD_HEADER_HIGH.getValue(),
+                        AppConfig.YAHOO_EOD_HEADER_LOW.getValue(),
+                        AppConfig.YAHOO_EOD_HEADER_CLOSE.getValue(),
+                        AppConfig.YAHOO_EOD_HEADER_VOLUME.getValue(),
+                        AppConfig.YAHOO_EOD_HEADER_ADJ_CLOSE.getValue(),
+                        AppConfig.YAHOO_EOD_HEADER_RSI.getValue())
+        );
+        int count = pLength;
+        for(Bar bar: pItem.getBars()) {
+            if (--count < 0) {
+                break;
+            }
+            System.out.print(fmt.format(bar.getDate())+"\t");
+            System.out.print(String.format("%1$.2f", bar.getOpen())+"\t");
+            System.out.print(String.format("%1$.2f", bar.getHigh())+"\t");
+            System.out.print(String.format("%1$.2f", bar.getLow()) + "\t");
+            System.out.print(String.format("%1$.2f", bar.getClose())+"\t");
+            System.out.print(String.format("%1$6d", bar.getVolume())+"\t");
+            System.out.print(String.format("%1$.2f", bar.getAdjClose())+"\t\t");
+            System.out.print(String.format("%1$.2f", bar.getRsi()) + "\n");
         }
     }
 
-    // TODO Put this out to an analytics package
-    private static void getRsi(Item item) {
+    private static String generateItem(Item pItem, Integer pLength) {
         SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
-        MInteger begin = new MInteger();
-        MInteger length = new MInteger();
-
-        double[] closePrice = new double[item.getBars().size()];
-        double[] out = new double[item.getBars().size()];
-
-        for (int i = 0; i < item.getBars().size(); i++) {
-            closePrice[i] = item.getBars().get(i).getClose();
-        }
-
-        Core c = new Core();
-        // RetCode retCode = c.sma(0, closePrice.length - 1, closePrice, PERIODS_AVERAGE, begin, length, out);
-        RetCode retCode = c.rsi(0, item.getBars().size() - 1, closePrice, PERIODS_AVERAGE, begin, length, out);
-        if (retCode == RetCode.Success) {
-
-            System.out.println(String.format("%1$s (%2$s) - %3$s", item.getSymbol(), item.getName(), item.getExchange()));
-            System.out.println("Output Begin:" + begin.value);
-            System.out.println("Output Begin:" + length.value);
-
-            for (int i = begin.value; i < closePrice.length; i++) {
-                StringBuilder line = new StringBuilder();
-                line.append("Date ");
-                line.append(fmt.format(item.getBars().get(i).getDate()));
-                line.append("\tclose= ");
-                line.append(String.format("%1$2.4f", closePrice[i]));
-                line.append("\trsi=");
-                line.append(String.format("%1$2.2f", out[i - begin.value]));
-                item.getBars().get(i - begin.value).setRsi(out[i - begin.value]);
-                System.out.println(item.getBars().get(i - begin.value));
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("\n%1$s - %2$s (%3$s) - %4$d Bars\n", pItem.getSymbol(), pItem.getName(), pItem.getExchange(), pItem.getBars().size()));
+        sb.append(
+                String.format("%1$s\t\t%2$s\t%3$s\t%4$s\t\t%5$s\t%6$s\t%7$s\t%8$s\n",
+                        AppConfig.YAHOO_EOD_HEADER_DATE.getValue(),
+                        AppConfig.YAHOO_EOD_HEADER_OPEN.getValue(),
+                        AppConfig.YAHOO_EOD_HEADER_HIGH.getValue(),
+                        AppConfig.YAHOO_EOD_HEADER_LOW.getValue(),
+                        AppConfig.YAHOO_EOD_HEADER_CLOSE.getValue(),
+                        AppConfig.YAHOO_EOD_HEADER_VOLUME.getValue(),
+                        AppConfig.YAHOO_EOD_HEADER_ADJ_CLOSE.getValue(),
+                        AppConfig.YAHOO_EOD_HEADER_RSI.getValue())
+        );
+        int count = pLength;
+        for(Bar bar: pItem.getBars()) {
+            if (--count < 0) {
+                break;
             }
-
-        } else {
-            System.out.println("Error");
+            sb.append(fmt.format(bar.getDate())+"\t");
+            sb.append(String.format("%1$.2f", bar.getOpen()) + "\t");
+            sb.append(String.format("%1$.2f", bar.getHigh()) + "\t");
+            sb.append(String.format("%1$.2f", bar.getLow()) + "\t");
+            sb.append(String.format("%1$.2f", bar.getClose()) + "\t");
+            sb.append(String.format("%1$6d", bar.getVolume()) + "\t");
+            sb.append(String.format("%1$.2f", bar.getAdjClose()) + "\t\t");
+            sb.append(String.format("%1$.2f", bar.getRsi()) + "\n");
         }
+        return sb.toString();
     }
 
     private static List<WatchList> getWatchList() {
         List<WatchList> watchListList = new ArrayList<WatchList>();
-        watchListList.add(new WatchList("VSTO", "VISTA OUTDOOR INC", "NYSE"));
+        watchListList.add(new WatchList("RTN", "RAYTHEON CO COM NEW", "NYSE"));
         watchListList.add(new WatchList("TOL", "TOLL BROTHERS INC", "NYSE"));
+        watchListList.add(new WatchList("BMI", "BADGER METER INC COM", "NYSE"));
+        watchListList.add(new WatchList("OA", "ORBITAL ATK INC COM", "NYSE"));
+        watchListList.add(new WatchList("LMT", "LOCKHEED MARTIN CORP COM", "NYSE"));
+        watchListList.add(new WatchList("CACI", "CACI INTL INC CL A", "NYSE"));
+        watchListList.add(new WatchList("VSTO", "VISTA OUTDOOR INC COM", "NYSE"));
+        watchListList.add(new WatchList("SSNI", "SILVER SPRING NETWORKS INC COM", "NYSE"));
+        watchListList.add(new WatchList("GD", "GENERAL DYNAMICS CORP COM", "NYSE"));
+        watchListList.add(new WatchList("FSDAX", "FIDELITY?? SELECT DEFENSE & AERO PORT", "NYSE"));
+        watchListList.add(new WatchList("TRMB", "TRIMBLE NAVIGATION LTD COM", "NYSE"));
         watchListList.add(new WatchList("HII", "HUNTINGTON INGALLS INDS INC", "NYSE"));
+        watchListList.add(new WatchList("BHP", "BHP BILLITON LTD SPONSORED ADR", "NYSE"));
+        watchListList.add(new WatchList("BGC", "GENERAL CABLE CORP NEW COM", "NYSE"));
+        watchListList.add(new WatchList("PWR", "QUANTA SVCS INC COM", "NYSE"));
         return watchListList;
     }
 

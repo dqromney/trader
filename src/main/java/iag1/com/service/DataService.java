@@ -31,7 +31,7 @@ public class DataService implements IDataService {
                 }
             });
         } else {
-            // Sort by date in descending order
+            // Sort by date in ascending order
             barList.sort(new Comparator<Bar>() {
                 public int compare(Bar o1, Bar o2) {
                     return o2.getDate().compareTo(o1.getDate());

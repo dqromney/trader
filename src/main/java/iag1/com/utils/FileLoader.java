@@ -2,7 +2,7 @@ package iag1.com.utils;
 
 import au.com.bytecode.opencsv.CSVReader;
 import iag1.com.Bar;
-import iag1.com.Item;
+import iag1.com.types.AppConfig;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -26,36 +26,34 @@ public class FileLoader {
     String exportDir = System.getProperty("user.dir");
     SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
 
+    /**
+     * Read from local file.
+     *
+     * @param pImportDir the {@link String} directory where to import
+     * @param pFilename the {@link String} filename in import directory to read
+     * @throws FileNotFoundException
+     */
     public FileLoader(String pImportDir, String pFilename) throws FileNotFoundException {
         csvReader = new CSVReader(new FileReader(pImportDir + '/' + pFilename), ',','"',0);
     }
 
+    /**
+     * Read from a stream reader.
+     *
+     * @param pReader the {@link Reader} object
+     * @throws FileNotFoundException
+     */
     public FileLoader(Reader pReader) throws FileNotFoundException {
         csvReader = new CSVReader(pReader, ',', '"', 0);
     }
 
-    public Item read() throws IOException, ParseException {
-        Item item = new Item("UNKNOWN", "DESC", "EXCHANGE");
-        List<String> headerList = Arrays.asList(csvReader.readNext());
-        String [] nextLine;
-        while ((nextLine = csvReader.readNext()) != null) {
-            // nextLine[] is an array of values from the line
-            Bar bar = new Bar();
-            // Date,Open,High,Low,Close,Volume,Adj Close
-
-            bar.setDate(fmt.parse(nextLine[headerList.indexOf("Date")]));
-            bar.setOpen(new Double(nextLine[headerList.indexOf("Open")]));
-            bar.setHigh(new Double(nextLine[headerList.indexOf("High")]));
-            bar.setLow(new Double(nextLine[headerList.indexOf("Low")]));
-            bar.setClose(new Double(nextLine[headerList.indexOf("Close")]));
-            bar.setVolume(new Long(nextLine[headerList.indexOf("Volume")]));
-            bar.setAdjClose(new Double(nextLine[headerList.indexOf("Adj Close")]));
-            item.getBars().add(bar);
-            System.out.println(bar.toString());
-        }
-        return item;
-    }
-
+    /**
+     * Read from file or stream the delimited data into a price bar.
+     *
+     * @return a list of {@link Bar} objects
+     * @throws IOException
+     * @throws ParseException
+     */
     public List<Bar> readBars() throws IOException, ParseException {
         Bar bar;
         List<Bar> barList = new ArrayList<Bar>();
@@ -63,15 +61,15 @@ public class FileLoader {
         String [] nextLine;
         while ((nextLine = csvReader.readNext()) != null) {
             bar = new Bar();
-            bar.setDate(fmt.parse(nextLine[headerList.indexOf("Date")]));
-            bar.setOpen(new Double(nextLine[headerList.indexOf("Open")]));
-            bar.setHigh(new Double(nextLine[headerList.indexOf("High")]));
-            bar.setLow(new Double(nextLine[headerList.indexOf("Low")]));
-            bar.setClose(new Double(nextLine[headerList.indexOf("Close")]));
-            bar.setVolume(new Long(nextLine[headerList.indexOf("Volume")]));
-            bar.setAdjClose(new Double(nextLine[headerList.indexOf("Adj Close")]));
+            bar.setDate(fmt.parse(nextLine[headerList.indexOf(AppConfig.YAHOO_EOD_HEADER_DATE.getValue())]));
+            bar.setOpen(new Double(nextLine[headerList.indexOf(AppConfig.YAHOO_EOD_HEADER_OPEN.getValue())]));
+            bar.setHigh(new Double(nextLine[headerList.indexOf(AppConfig.YAHOO_EOD_HEADER_HIGH.getValue())]));
+            bar.setLow(new Double(nextLine[headerList.indexOf(AppConfig.YAHOO_EOD_HEADER_LOW.getValue())]));
+            bar.setClose(new Double(nextLine[headerList.indexOf(AppConfig.YAHOO_EOD_HEADER_CLOSE.getValue())]));
+            bar.setVolume(new Long(nextLine[headerList.indexOf(AppConfig.YAHOO_EOD_HEADER_VOLUME.getValue())]));
+            bar.setAdjClose(new Double(nextLine[headerList.indexOf(AppConfig.YAHOO_EOD_HEADER_ADJ_CLOSE.getValue())]));
             barList.add(bar);
-            System.out.println(bar.toString());
+            // System.out.println(bar.toString());
         }
         return barList;
     }
