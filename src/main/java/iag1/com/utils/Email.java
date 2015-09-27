@@ -25,10 +25,10 @@ public class Email {
         final String password = configProps.getProperty("gmail.password");
 
         Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
+        props.put("mail.smtp.auth", configProps.getProperty("mail.smtp.auth"));
+        props.put("mail.smtp.starttls.enable", configProps.getProperty("mail.smtp.starttls.enable"));
+        props.put("mail.smtp.host", configProps.getProperty("mail.smtp.host"));
+        props.put("mail.smtp.port", configProps.getProperty("mail.smtp.port"));
         // SSL port
         // props.put("mail.smtp.port", "465");
 
