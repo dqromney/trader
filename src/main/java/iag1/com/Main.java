@@ -39,7 +39,8 @@ public class Main {
             sb.append(generateItem(item, 5));
         }
         // Email report to myself
-        Email.sendEmail("dqromney@gmail.com", "Daily Stock RSI Report", sb.toString());
+        Email email = new Email();
+        email.sendEmail("dqromney@gmail.com", "Daily Stock RSI Report", sb.toString());
     }
 
     private static void displayItem(Item pItem, Integer pLength) {

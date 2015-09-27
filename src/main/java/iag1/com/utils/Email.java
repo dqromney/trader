@@ -3,6 +3,7 @@ package iag1.com.utils;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.io.IOException;
 import java.util.Properties;
 
 /**
@@ -12,9 +13,16 @@ import java.util.Properties;
  */
 public class Email {
 
-    public static void sendEmail(String pTo, String pSubject, String pText) {
-        final String username = "dqromney@gmail.com";
-        final String password = "bogus";
+    private ReadConfig readConfig;
+
+    public Email() {
+        readConfig = new ReadConfig();
+    }
+
+    public void sendEmail(String pTo, String pSubject, String pText) throws IOException {
+        Properties configProps = readConfig.getPropValues();
+        final String username = configProps.getProperty("gmail.login");
+        final String password = configProps.getProperty("gmail.password");
 
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
@@ -46,4 +54,5 @@ public class Email {
             throw new RuntimeException(e);
         }
     }
+
 }
