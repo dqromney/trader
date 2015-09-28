@@ -5,7 +5,6 @@ import iag1.com.service.DataService;
 import iag1.com.types.AppConfig;
 import iag1.com.types.SortOrder;
 import iag1.com.types.TechnicalEnums;
-import iag1.com.utils.Email;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -32,7 +31,7 @@ public class Main {
         Item item;
         sb.append("<!DOCTYPE HTML><HTML><HEADER></HEADER><BODY><TABLE style=\"width:100%\">");
         for(WatchList watch: getWatchList()) {
-            barList = dataService.getAllHistory(watch.getSymbol(), SortOrder.ASC);
+            barList = dataService.getAllHistory(watch.getSymbol(), SortOrder.DESC);
             barList = Technical.rsi(barList, TechnicalEnums.RSI_PERIOD_AVERAGE_DEFAULT.getValue());
             item = new Item(watch.getSymbol(), watch.getName(), watch.getExchange(), barList);
             displayItem(item, 5);
@@ -40,8 +39,8 @@ public class Main {
         }
         sb.append("</TABLE></BODY></HTML>");
         // Email report to myself
-        Email email = new Email();
-        email.sendEmail("dqromney@gmail.com", "Daily Stock RSI Report", sb.toString());
+        //Email email = new Email();
+        //email.sendEmail("dqromney@gmail.com", "Daily Stock RSI Report", sb.toString());
     }
 
     private static void displayItem(Item pItem, Integer pLength) {

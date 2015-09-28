@@ -26,7 +26,7 @@ public class DataService implements IDataService {
         if (pDateSortOrder.equals(SortOrder.DESC)) {
             // Sort by date in descending order
             barList.sort(new Comparator<Bar>() {
-                public int compare(Bar o1, Bar o2) {
+                public int compare(Bar o2, Bar o1) {
                     return o1.getDate().compareTo(o2.getDate());
                 }
             });
@@ -34,7 +34,7 @@ public class DataService implements IDataService {
             // Sort by date in ascending order
             barList.sort(new Comparator<Bar>() {
                 public int compare(Bar o1, Bar o2) {
-                    return o2.getDate().compareTo(o1.getDate());
+                    return o1.getDate().compareTo(o2.getDate());
                 }
             });
         }
