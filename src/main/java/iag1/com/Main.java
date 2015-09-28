@@ -47,6 +47,12 @@ public class Main {
         email.sendEmail("dqromney@gmail.com", "Daily Stock RSI Report", sb.toString());
     }
 
+    /**
+     * Gets a watch list of stocks.
+     *
+     * @return a list of {@link WatchList} objects
+     * @throws IOException
+     */
     private static List<WatchList> getWatchList() throws IOException {
         List<WatchList> watchList = new ArrayList<WatchList>();
         ReadConfig readConfig = new ReadConfig("watchList.properties");
@@ -62,22 +68,6 @@ public class Main {
                 break;
             }
         }
-
-//        watchList.add(new WatchList("RTN", "RAYTHEON CO COM NEW", "NYSE"));
-//        watchList.add(new WatchList("TOL", "TOLL BROTHERS INC", "NYSE"));
-//        watchList.add(new WatchList("BMI", "BADGER METER INC COM", "NYSE"));
-//        watchList.add(new WatchList("OA", "ORBITAL ATK INC COM", "NYSE"));
-//        watchList.add(new WatchList("LMT", "LOCKHEED MARTIN CORP COM", "NYSE"));
-//        watchList.add(new WatchList("CACI", "CACI INTL INC CL A", "NYSE"));
-//        watchList.add(new WatchList("VSTO", "VISTA OUTDOOR INC COM", "NYSE"));
-//        watchList.add(new WatchList("SSNI", "SILVER SPRING NETWORKS INC COM", "NYSE"));
-//        watchList.add(new WatchList("GD", "GENERAL DYNAMICS CORP COM", "NYSE"));
-//        watchList.add(new WatchList("FSDAX", "FIDELITY?? SELECT DEFENSE & AERO PORT", "NYSE"));
-//        watchList.add(new WatchList("TRMB", "TRIMBLE NAVIGATION LTD COM", "NYSE"));
-//        watchList.add(new WatchList("HII", "HUNTINGTON INGALLS INDS INC", "NYSE"));
-//        watchList.add(new WatchList("BHP", "BHP BILLITON LTD SPONSORED ADR", "NYSE"));
-//        watchList.add(new WatchList("BGC", "GENERAL CABLE CORP NEW COM", "NYSE"));
-//        watchList.add(new WatchList("PWR", "QUANTA SVCS INC COM", "NYSE"));
         return watchList;
     }
 
