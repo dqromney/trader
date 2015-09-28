@@ -30,14 +30,15 @@ public class Main {
         StringBuilder sb = new StringBuilder();
         List<Bar> barList;
         Item item;
-
+        sb.append("<!DOCTYPE HTML><HTML><HEADER></HEADER><BODY><TABLE style=\"width:100%\">");
         for(WatchList watch: getWatchList()) {
             barList = dataService.getAllHistory(watch.getSymbol(), SortOrder.ASC);
             barList = Technical.rsi(barList, TechnicalEnums.RSI_PERIOD_AVERAGE_DEFAULT.getValue());
             item = new Item(watch.getSymbol(), watch.getName(), watch.getExchange(), barList);
             displayItem(item, 5);
-            sb.append(generateItem(item, 5));
+            sb.append(generateHtmlItem(item, 5));
         }
+        sb.append("</TABLE></BODY></HTML>");
         // Email report to myself
         Email email = new Email();
         email.sendEmail("dqromney@gmail.com", "Daily Stock RSI Report", sb.toString());
@@ -62,13 +63,13 @@ public class Main {
             if (--count < 0) {
                 break;
             }
-            System.out.print(fmt.format(bar.getDate())+"\t");
-            System.out.print(String.format("%1$.2f", bar.getOpen())+"\t");
-            System.out.print(String.format("%1$.2f", bar.getHigh())+"\t");
+            System.out.print(fmt.format(bar.getDate()) + "\t");
+            System.out.print(String.format("%1$.2f", bar.getOpen()) + "\t");
+            System.out.print(String.format("%1$.2f", bar.getHigh()) + "\t");
             System.out.print(String.format("%1$.2f", bar.getLow()) + "\t");
-            System.out.print(String.format("%1$.2f", bar.getClose())+"\t");
-            System.out.print(String.format("%1$6d", bar.getVolume())+"\t");
-            System.out.print(String.format("%1$.2f", bar.getAdjClose())+"\t\t");
+            System.out.print(String.format("%1$.2f", bar.getClose()) + "\t");
+            System.out.print(String.format("%1$6d", bar.getVolume()) + "\t");
+            System.out.print(String.format("%1$.2f", bar.getAdjClose()) + "\t\t");
             System.out.print(String.format("%1$.2f", bar.getRsi()) + "\n");
         }
     }
@@ -101,6 +102,43 @@ public class Main {
             sb.append(String.format("%1$6d", bar.getVolume()) + "\t");
             sb.append(String.format("%1$.2f", bar.getAdjClose()) + "\t\t");
             sb.append(String.format("%1$.2f", bar.getRsi()) + "\n");
+        }
+        return sb.toString();
+    }
+
+    private static String generateHtmlItem(Item pItem, Integer pLength) {
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("<TR colspan=\"8\"><TH>%1$s - %2$s (%3$s) - %4$d Bars</TH></TR>\n", pItem.getSymbol(), pItem.getName(), pItem.getExchange(), pItem.getBars().size()));
+        sb.append("<TR>");
+        sb.append(
+                String.format("<TH>%1$s</TH><TH>%2$s</TH><TH>%3$s</TH><TH>%4$s</TH><TH>%5$s</TH><TH>%6$s</TH><TH>%7$s</TH><TH>%8$s</TH>",
+                        AppConfig.YAHOO_EOD_HEADER_DATE.getValue(),
+                        AppConfig.YAHOO_EOD_HEADER_OPEN.getValue(),
+                        AppConfig.YAHOO_EOD_HEADER_HIGH.getValue(),
+                        AppConfig.YAHOO_EOD_HEADER_LOW.getValue(),
+                        AppConfig.YAHOO_EOD_HEADER_CLOSE.getValue(),
+                        AppConfig.YAHOO_EOD_HEADER_VOLUME.getValue(),
+                        AppConfig.YAHOO_EOD_HEADER_ADJ_CLOSE.getValue(),
+                        AppConfig.YAHOO_EOD_HEADER_RSI.getValue())
+        );
+        sb.append("</TR>\n");
+
+        int count = pLength;
+        for(Bar bar: pItem.getBars()) {
+            if (--count < 0) {
+                break;
+            }
+            sb.append("<TR><TD>");
+            sb.append(fmt.format(bar.getDate())+"</TD><TD>");
+            sb.append(String.format("%1$.2f", bar.getOpen()) + "</TD><TD>");
+            sb.append(String.format("%1$.2f", bar.getHigh()) + "</TD><TD>");
+            sb.append(String.format("%1$.2f", bar.getLow()) + "</TD><TD>");
+            sb.append(String.format("%1$.2f", bar.getClose()) + "</TD><TD>");
+            sb.append(String.format("%1$6d", bar.getVolume()) + "</TD><TD>");
+            sb.append(String.format("%1$.2f", bar.getAdjClose()) + "</TD><TD>");
+            sb.append(String.format("%1$.2f", bar.getRsi()) + "</TD>");
+            sb.append("</TR>\n");
         }
         return sb.toString();
     }

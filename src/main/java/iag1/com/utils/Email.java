@@ -44,7 +44,7 @@ public class Email {
             message.setFrom(new InternetAddress("dqromney@gmail.com"));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(pTo));
             message.setSubject(pSubject);
-            message.setText(pText);
+            message.setContent(pText, "text/html; charset=utf-8");
 
             System.out.println("Start email send ...");
             Transport.send(message);
