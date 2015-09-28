@@ -16,7 +16,7 @@ public class Email {
     private ReadConfig readConfig;
 
     public Email() {
-        readConfig = new ReadConfig();
+        readConfig = new ReadConfig("config.properties");
     }
 
     public void sendEmail(String pTo, String pSubject, String pText) throws IOException {

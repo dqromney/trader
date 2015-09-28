@@ -45,8 +45,7 @@ public class Technical {
         if (retCode == RetCode.Success) {
             // Apply technical to bar list
             for (int i = begin.value; i < closePrice.length; i++) {
-                // TODO Not working, mis-aligned
-                pBarList.get(i - begin.value).setRsi(out[i - begin.value]);
+                pBarList.get(i).setRsi(out[i - begin.value]);
             }
         } else {
             System.out.println(String.format("Error: %1$s", RetCode.AllocErr.name()));
@@ -54,5 +53,4 @@ public class Technical {
 
         return pBarList;
     }
-
 }
