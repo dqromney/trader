@@ -1,4 +1,4 @@
-package iag1.com;
+package iag1.com.model;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

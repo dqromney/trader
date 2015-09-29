@@ -1,6 +1,6 @@
 package iag1.com.service;
 
-import iag1.com.Bar;
+import iag1.com.model.Bar;
 import iag1.com.repository.EndOfDay;
 import iag1.com.types.SortOrder;
 

@@ -1,6 +1,6 @@
 package iag1.com.repository;
 
-import iag1.com.Bar;
+import iag1.com.model.Bar;
 import iag1.com.types.AppConfig;
 import iag1.com.utils.FileLoader;
 

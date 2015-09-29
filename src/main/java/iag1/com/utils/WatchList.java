@@ -1,4 +1,4 @@
-package iag1.com;
+package iag1.com.utils;
 
 /**
  * Created by dqromney on 9/23/15.

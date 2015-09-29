@@ -1,4 +1,6 @@
-package iag1.com;
+package iag1.com.model;
+
+import iag1.com.model.Bar;
 
 import java.util.ArrayList;
 import java.util.Collections;

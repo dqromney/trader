@@ -3,7 +3,7 @@ package iag1.com.analytics;
 import com.tictactec.ta.lib.Core;
 import com.tictactec.ta.lib.MInteger;
 import com.tictactec.ta.lib.RetCode;
-import iag1.com.Bar;
+import iag1.com.model.Bar;
 import iag1.com.types.TechnicalEnums;
 
 import java.util.List;

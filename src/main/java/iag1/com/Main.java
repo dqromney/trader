@@ -2,12 +2,15 @@ package iag1.com;
 
 import com.sun.deploy.util.StringUtils;
 import iag1.com.analytics.Technical;
+import iag1.com.model.Bar;
+import iag1.com.model.Item;
 import iag1.com.service.DataService;
 import iag1.com.types.SortOrder;
 import iag1.com.types.TechnicalEnums;
 import iag1.com.utils.Email;
 import iag1.com.utils.ReadConfig;
 import iag1.com.utils.Report;
+import iag1.com.utils.WatchList;
 
 import java.io.IOException;
 import java.text.ParseException;

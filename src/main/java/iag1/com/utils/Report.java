@@ -1,7 +1,7 @@
 package iag1.com.utils;
 
-import iag1.com.Bar;
-import iag1.com.Item;
+import iag1.com.model.Bar;
+import iag1.com.model.Item;
 import iag1.com.types.AppConfig;
 
 import java.text.SimpleDateFormat;

@@ -1,7 +1,7 @@
 package iag1.com.utils;
 
 import au.com.bytecode.opencsv.CSVReader;
-import iag1.com.Bar;
+import iag1.com.model.Bar;
 import iag1.com.types.AppConfig;
 
 import java.io.FileNotFoundException;
