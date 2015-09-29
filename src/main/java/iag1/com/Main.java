@@ -33,7 +33,6 @@ public class Main {
     public static void main(String[] args) throws ParseException, IOException {
         DataService dataService = new DataService();
         StringBuilder sb = new StringBuilder();
-        String report = null;
         List<Bar> barList;
         Item item;
         sb.append("<!DOCTYPE HTML><HTML><HEADER></HEADER><BODY><TABLE style=\"width:100%\">");
@@ -41,7 +40,7 @@ public class Main {
             barList = dataService.getAllHistory(watch.getSymbol(), SortOrder.ASC);
             barList = Technical.rsi(barList, TechnicalEnums.RSI_PERIOD_AVERAGE_DEFAULT.getValue());
             item = new Item(watch.getSymbol(), watch.getName(), watch.getExchange(), barList);
-            System.out.println(Report.generateItem(item, 5));
+            System.out.print(Report.generateItem(item, 5));
             sb.append(Report.generateHtmlItem(item, 5));
         }
         sb.append("</TABLE></BODY></HTML>");
