@@ -75,12 +75,12 @@ public class Report {
 
         sb.append(String.format("<TR align='left'><TH colspan='8' >%1$s - %2$s (%3$s) - %4$d Bars</TH></TR>\n",
                 pItem.getSymbol(), pItem.getName(), pItem.getExchange(), pItem.getBars().size()));
-        sb.append(String.format("<TR align='left'><TH colspan='8' >EWR Issue: %1tY-%1$tm \nProfit Potential: %2$1.0f%% \nRisk Level[1(safest)-5]: %3$1.2f \nPayoff Period (years): %4$1.2f</TH></TR>",
+        sb.append(String.format("<TR align='left'><TH colspan='8' >EWR Issue: %1tY-%1$tm Profit Potential: %2$1.0f%% Risk Level[1(safest)-5]: %3$1.2f Payoff Period (years): %4$1.2f</TH></TR>",
                 watchList.getEwrIssueDate() == null ? new Date() : watchList.getEwrIssueDate(),
                 watchList.getEwrProfitPotential() == null ? 0.0 : watchList.getEwrProfitPotential(),
                 watchList.getEwrRiskLevel() == null ? 0.0 : watchList.getEwrRiskLevel(),
                 watchList.getEwrPayoffPeriod() == null ? 0.0 : watchList.getEwrPayoffPeriod()));
-        sb.append("<TR>");
+        sb.append("<TR style='border: 1px solid black; border-collapse: collapse;'>");
         sb.append(
                 String.format("<TH>%1$s</TH><TH>%2$s</TH><TH>%3$s</TH><TH>%4$s</TH><TH>%5$s</TH><TH>%6$s</TH><TH>%7$s</TH><TH>%8$s</TH>",
                         AppConfig.YAHOO_EOD_HEADER_DATE.getValue(),
@@ -99,14 +99,14 @@ public class Report {
             if (--count < 0) {
                 break;
             }
-            sb.append("<TR><TD>");
-            sb.append(fmt.format(bar.getDate())+"</TD><TD>");
-            sb.append(String.format("%1$.2f", bar.getOpen()) + "</TD><TD>");
-            sb.append(String.format("%1$.2f", bar.getHigh()) + "</TD><TD>");
-            sb.append(String.format("%1$.2f", bar.getLow()) + "</TD><TD>");
-            sb.append(String.format("%1$.2f", bar.getClose()) + "</TD><TD>");
-            sb.append(String.format("%1$6d", bar.getVolume()) + "</TD><TD>");
-            sb.append(String.format("%1$.2f", bar.getAdjClose()) + "</TD><TD>");
+            sb.append("<TR style='border: 1px solid black; border-collapse: collapse;'><TD>");
+            sb.append(fmt.format(bar.getDate())+"</TD><TD align='right'>");
+            sb.append(String.format("%1$.2f", bar.getOpen()) + "</TD><TD align='right'>");
+            sb.append(String.format("%1$.2f", bar.getHigh()) + "</TD><TD align='right'>");
+            sb.append(String.format("%1$.2f", bar.getLow()) + "</TD><TD align='right'>");
+            sb.append(String.format("%1$.2f", bar.getClose()) + "</TD><TD align='right'>");
+            sb.append(String.format("%1$6d", bar.getVolume()) + "</TD><TD align='right'>");
+            sb.append(String.format("%1$.2f", bar.getAdjClose()) + "</TD><TD align='right'>");
             sb.append(String.format("%1$.2f", bar.getRsi()) + "</TD>");
             sb.append("</TR>\n");
         }

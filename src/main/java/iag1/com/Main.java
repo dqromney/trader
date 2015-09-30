@@ -45,7 +45,7 @@ public class Main {
         StringBuilder sb = new StringBuilder();
         List<Bar> barList;
         Item item;
-        sb.append("<!DOCTYPE HTML><HTML><HEADER></HEADER><BODY><TABLE style=\"width:100%\">");
+        sb.append("<!DOCTYPE HTML><HTML><HEADER></HEADER><BODY><TABLE style='width:100%; border: 1px solid black; border-collapse: collapse;'>");
         for(WatchList watch: getWatchList()) {
             barList = dataService.getAllHistory(watch.getSymbol(), SortOrder.ASC);
             barList = Technical.rsi(barList, TechnicalEnums.RSI_PERIOD_AVERAGE_DEFAULT.getValue());
@@ -104,6 +104,7 @@ public class Main {
             String key = String.format("watch.list.%1$03d", i);
             value = (String)props.get(key);
             if (value != null) {
+                // TODO Clean this up with opencsv
                 String[] items = StringUtils.split(value, "|");
                 // # Watch List (Symbol|Name|Exchange|EWR Issue Date[YYYY-MM-DD]|EWR Risk Level|EWR Profit Potential| EWR Payoff Period in years)
                 WatchList wlItem = null;
