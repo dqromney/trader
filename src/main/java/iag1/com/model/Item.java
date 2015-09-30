@@ -1,6 +1,6 @@
 package iag1.com.model;
 
-import iag1.com.model.Bar;
+import iag1.com.utils.WatchList;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,6 +17,7 @@ public class Item {
     private String name;
     private String exchange;
     private List<Bar> bars;
+    private WatchList watchList;
 
     public Item() {
         // Empty
@@ -34,6 +35,14 @@ public class Item {
         this.name = name;
         this.exchange = pExchange;
         this.bars = pBarList == null ? Collections.EMPTY_LIST : pBarList;
+    }
+
+    public Item(WatchList pWatchList, List<Bar> pBarList) {
+        this.symbol = pWatchList.getSymbol();
+        this.name = pWatchList.getName();
+        this.exchange = pWatchList.getExchange();
+        this.bars = pBarList == null ? Collections.EMPTY_LIST : pBarList;
+        this.watchList = pWatchList;
     }
 
     // ----------------------------------------------------------------
@@ -71,6 +80,13 @@ public class Item {
         this.bars = bars;
     }
 
+    public WatchList getWatchList() {
+        return watchList;
+    }
+
+    public void setWatchList(WatchList watchList) {
+        this.watchList = watchList;
+    }
 
     @Override
     public String toString() {
@@ -79,6 +95,7 @@ public class Item {
         sb.append(", name='").append(name).append('\'');
         sb.append(", exchange='").append(exchange).append('\'');
         sb.append(", bars=").append(bars);
+        sb.append(", watchList=").append(watchList);
         sb.append('}');
         return sb.toString();
     }

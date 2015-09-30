@@ -6,6 +6,7 @@ import iag1.com.types.AppConfig;
 
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
+import java.util.Date;
 
 /**
  * Report class.
@@ -24,8 +25,14 @@ public class Report {
                 return o2.getDate().compareTo(o1.getDate());
             }
         });
+        WatchList watchList = pItem.getWatchList();
 
         sb.append(String.format("\n%1$s - %2$s (%3$s) - %4$d Bars\n", pItem.getSymbol(), pItem.getName(), pItem.getExchange(), pItem.getBars().size()));
+        sb.append(String.format("EWR Issue: %1tY-%1$tm \nProfit Potential: %2$1.0f%% \nRisk Level[1(safest)-5(not safe)]: %3$1.2f \nPayoff Period (years): %4$1.2f\n",
+                watchList.getEwrIssueDate() == null ? new Date() : watchList.getEwrIssueDate(),
+                watchList.getEwrProfitPotential() == null ? 0.0 : watchList.getEwrProfitPotential(),
+                watchList.getEwrRiskLevel() == null ? 0.0 : watchList.getEwrRiskLevel(),
+                watchList.getEwrPayoffPeriod() == null ? 0.0 : watchList.getEwrPayoffPeriod()));
         sb.append(
                 String.format("%1$s\t\t%2$s\t%3$s\t%4$s\t\t%5$s\t%6$s\t%7$s\t%8$s\n",
                         AppConfig.YAHOO_EOD_HEADER_DATE.getValue(),
@@ -64,8 +71,15 @@ public class Report {
                 return o2.getDate().compareTo(o1.getDate());
             }
         });
+        WatchList watchList = pItem.getWatchList();
 
-        sb.append(String.format("<TR colspan=\"8\"><TH>%1$s - %2$s (%3$s) - %4$d Bars</TH></TR>\n", pItem.getSymbol(), pItem.getName(), pItem.getExchange(), pItem.getBars().size()));
+        sb.append(String.format("<TR align='left'><TH colspan='8' >%1$s - %2$s (%3$s) - %4$d Bars</TH></TR>\n",
+                pItem.getSymbol(), pItem.getName(), pItem.getExchange(), pItem.getBars().size()));
+        sb.append(String.format("<TR align='left'><TH colspan='8' >EWR Issue: %1tY-%1$tm \nProfit Potential: %2$1.0f%% \nRisk Level[1(safest)-5]: %3$1.2f \nPayoff Period (years): %4$1.2f</TH></TR>",
+                watchList.getEwrIssueDate() == null ? new Date() : watchList.getEwrIssueDate(),
+                watchList.getEwrProfitPotential() == null ? 0.0 : watchList.getEwrProfitPotential(),
+                watchList.getEwrRiskLevel() == null ? 0.0 : watchList.getEwrRiskLevel(),
+                watchList.getEwrPayoffPeriod() == null ? 0.0 : watchList.getEwrPayoffPeriod()));
         sb.append("<TR>");
         sb.append(
                 String.format("<TH>%1$s</TH><TH>%2$s</TH><TH>%3$s</TH><TH>%4$s</TH><TH>%5$s</TH><TH>%6$s</TH><TH>%7$s</TH><TH>%8$s</TH>",
