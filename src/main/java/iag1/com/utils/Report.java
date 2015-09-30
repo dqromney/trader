@@ -99,16 +99,40 @@ public class Report {
             if (--count < 0) {
                 break;
             }
-            sb.append("<TR style='border: 1px solid black; border-collapse: collapse;'><TD>");
-            sb.append(fmt.format(bar.getDate())+"</TD><TD align='right'>");
-            sb.append(String.format("%1$.2f", bar.getOpen()) + "</TD><TD align='right'>");
-            sb.append(String.format("%1$.2f", bar.getHigh()) + "</TD><TD align='right'>");
-            sb.append(String.format("%1$.2f", bar.getLow()) + "</TD><TD align='right'>");
-            sb.append(String.format("%1$.2f", bar.getClose()) + "</TD><TD align='right'>");
-            sb.append(String.format("%1$6d", bar.getVolume()) + "</TD><TD align='right'>");
-            sb.append(String.format("%1$.2f", bar.getAdjClose()) + "</TD><TD align='right'>");
-            sb.append(String.format("%1$.2f", bar.getRsi()) + "</TD>");
-            sb.append("</TR>\n");
+            if(bar.getRsi() < 40.0) {
+                sb.append("<TR style='border: 1px solid black; border-collapse: collapse; color:red'><TD>");
+                sb.append(fmt.format(bar.getDate())+"</TD><TD align='right'>");
+                sb.append(String.format("%1$.2f", bar.getOpen()) + "</TD><TD align='right'>");
+                sb.append(String.format("%1$.2f", bar.getHigh()) + "</TD><TD align='right'>");
+                sb.append(String.format("%1$.2f", bar.getLow()) + "</TD><TD align='right'>");
+                sb.append(String.format("%1$.2f", bar.getClose()) + "</TD><TD align='right'>");
+                sb.append(String.format("%1$6d", bar.getVolume()) + "</TD><TD align='right'>");
+                sb.append(String.format("%1$.2f", bar.getAdjClose()) + "</TD><TD align='right'>");
+                sb.append(String.format("%1$.2f", bar.getRsi()) + "</TD>");
+                sb.append("</TR>\n");
+            } else if (bar.getRsi() > 60) {
+                sb.append("<TR style='border: 1px solid black; border-collapse: collapse; color:blue'><TD>");
+                sb.append(fmt.format(bar.getDate())+"</TD><TD align='right'>");
+                sb.append(String.format("%1$.2f", bar.getOpen()) + "</TD><TD align='right'>");
+                sb.append(String.format("%1$.2f", bar.getHigh()) + "</TD><TD align='right'>");
+                sb.append(String.format("%1$.2f", bar.getLow()) + "</TD><TD align='right'>");
+                sb.append(String.format("%1$.2f", bar.getClose()) + "</TD><TD align='right'>");
+                sb.append(String.format("%1$6d", bar.getVolume()) + "</TD><TD align='right'>");
+                sb.append(String.format("%1$.2f", bar.getAdjClose()) + "</TD><TD align='right'>");
+                sb.append(String.format("%1$.2f", bar.getRsi()) + "</TD>");
+                sb.append("</TR>\n");
+            } else {
+                sb.append("<TR style='border: 1px solid black; border-collapse: collapse;'><TD>");
+                sb.append(fmt.format(bar.getDate())+"</TD><TD align='right'>");
+                sb.append(String.format("%1$.2f", bar.getOpen()) + "</TD><TD align='right'>");
+                sb.append(String.format("%1$.2f", bar.getHigh()) + "</TD><TD align='right'>");
+                sb.append(String.format("%1$.2f", bar.getLow()) + "</TD><TD align='right'>");
+                sb.append(String.format("%1$.2f", bar.getClose()) + "</TD><TD align='right'>");
+                sb.append(String.format("%1$6d", bar.getVolume()) + "</TD><TD align='right'>");
+                sb.append(String.format("%1$.2f", bar.getAdjClose()) + "</TD><TD align='right'>");
+                sb.append(String.format("%1$.2f", bar.getRsi()) + "</TD>");
+                sb.append("</TR>\n");
+            }
         }
         return sb.toString();
     }
