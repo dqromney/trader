@@ -22,10 +22,10 @@
                 <version>2.5</version>
                 <configuration>
                     <archive>
-                      <manifest>
-                        <addClasspath>true</addClasspath>
-                        <mainClass>iag1.com.Main</mainClass>
-                      </manifest>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>iag1.com.Main</mainClass>
+                        </manifest>
                     </archive>
                 </configuration>
             </plugin>
@@ -60,6 +60,15 @@
                     </descriptors>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -86,14 +95,24 @@
             <version>1.4</version>
         </dependency>
         <dependency>
-        	<groupId>org.apache.commons</groupId>
-        	<artifactId>commons-lang3</artifactId>
-        	<version>3.4</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.4</version>
         </dependency>
         <dependency>
             <groupId>jargs</groupId>
             <artifactId>jargs</artifactId>
             <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>at.chrl</groupId>
+            <artifactId>chrl-cron</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>at.chrl</groupId>
+            <artifactId>chrl-utils</artifactId>
+            <version>1.1.0</version>
         </dependency>
     </dependencies>
 </project>

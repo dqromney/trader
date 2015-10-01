@@ -1,5 +1,6 @@
 package iag1.com;
 
+import at.chrl.nutils.cron.CronService;
 import iag1.com.analytics.Technical;
 import iag1.com.model.Bar;
 import iag1.com.model.Item;
@@ -37,7 +38,17 @@ public class Main {
 
         Main main = new Main();
         main.initialize(args);
-        main.execute();
+        // main.execute();
+        CronService.getInstance().schedule(() -> {
+            try {
+                main.execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }, "*/50 * * * * ?");
+
     }
 
     private void execute() throws IOException, ParseException {
