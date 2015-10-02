@@ -109,10 +109,16 @@
             <artifactId>chrl-cron</artifactId>
             <version>1.1.0</version>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>at.chrl</groupId>-->
+            <!--<artifactId>chrl-utils</artifactId>-->
+            <!--<version>1.1.0</version>-->
+        <!--</dependency>-->
+        <!-- Quartz API -->
         <dependency>
-            <groupId>at.chrl</groupId>
-            <artifactId>chrl-utils</artifactId>
-            <version>1.1.0</version>
-        </dependency>
+       		<groupId>org.quartz-scheduler</groupId>
+       		<artifactId>quartz</artifactId>
+       		<version>2.1.5</version>
+       	</dependency>
     </dependencies>
 </project>
