@@ -16,6 +16,7 @@ import org.quartz.JobExecutionException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -45,7 +46,8 @@ public class RsiReportJob implements Job {
         // 14 day RSI + 5 (visible history) + 5 (extra history) + 3 days extra due to weekends and holidays.
         Integer requiredDays = TechnicalEnums.RSI_PERIOD_AVERAGE_DEFAULT.getValue() + (2 * SHOW_ROW_HISTORY_COUNT) + 3;
         Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.DATE, requiredDays);
+        cal.set(Calendar.DATE, -1*requiredDays);
+        Date fromDate = cal.getTime();
 
         List<WatchList> watchList;
         try {
@@ -58,7 +60,7 @@ public class RsiReportJob implements Job {
 
         for(WatchList watch: watchList) {
             try {
-                barList = dataService.getHistoryFromDate(watch.getSymbol(), cal.getTime(), SortOrder.ASC);
+                barList = dataService.getHistoryFromDate(watch.getSymbol(), fromDate, SortOrder.ASC);
             } catch (IOException e) {
                 throw new JobExecutionException("Unable to load history data", e);
             } catch (ParseException e) {
@@ -66,9 +68,11 @@ public class RsiReportJob implements Job {
             }
             barList = Technical.rsi(barList, TechnicalEnums.RSI_PERIOD_AVERAGE_DEFAULT.getValue());
             item = new Item(watch, barList);
-            // System.out.print(Report.generateItem(item, SHOW_ROW_HISTORY_COUNT));
+            System.out.print(".");
+            System.out.print(Report.generateItem(item, SHOW_ROW_HISTORY_COUNT));
             sb.append(Report.generateHtmlItem(item, SHOW_ROW_HISTORY_COUNT));
         }
+        System.out.println();
         sb.append("</TABLE></BODY></HTML>");
 
         if(sendEmail) {

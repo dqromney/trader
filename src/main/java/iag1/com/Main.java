@@ -59,18 +59,15 @@ public class Main {
      */
     private void registerJobs() throws SchedulerException {
         Scheduler scheduler = new StdSchedulerFactory().getScheduler();
+        RegisterJob registerJob = new RegisterJob().invoke(
+                "rsiReport",
+                "reports",
+                // "0 * * ? * MON-FRI", //Each Mon-Fri at midnight
+                "0 0/1 * * * ?", // Every 2 minutes
+                "Retrieves wish-list data, calculates RSI, and emails report.");
+        JobDetail job = registerJob.getJob();
+        Trigger trigger = registerJob.getTrigger();
 
-        // Define the RSI Report job
-        JobDetail job = JobBuilder.newJob(RsiReportJob.class).withIdentity("rsiReportJob", "reports").build();
-        // Trigger the job to run on the next round minute
-        Trigger trigger = TriggerBuilder
-                .newTrigger()
-                .withIdentity("rsiReport", "reports")
-                // .withSchedule(CronScheduleBuilder.cronSchedule("0/50 * * * * ?")) // Each 50 seconds
-                .withSchedule(CronScheduleBuilder.cronSchedule("0 * * ? * MON-FRI")) // Each Mon-Fri at midnight
-                .withDescription("Retrieves wish-list data, calculates RSI, and emails report.") // TEST
-                .usingJobData("sendEmail", Boolean.TRUE)
-                .build();
         // Schedule the job
         scheduler.start();
         scheduler.scheduleJob(job, trigger);
@@ -116,5 +113,36 @@ public class Main {
                 .append(Level.OFF);
         System.err.println(
                 String.format("Usage java [-w -wishlist] [-l --loggingLevel <" + loggingLevels + ">]\n"));
+    }
+
+    /**
+     * Register a job.
+     */
+    private class RegisterJob {
+        private JobDetail job;
+        private Trigger trigger;
+
+        public JobDetail getJob() {
+            return job;
+        }
+
+        public Trigger getTrigger() {
+            return trigger;
+        }
+
+        public RegisterJob invoke(String pName, String pGroup, String pCronPattern, String pDescription) {
+            // Define the RSI Report job
+            job = JobBuilder.newJob(RsiReportJob.class).withIdentity(pName, pGroup).build();
+            // Trigger the job to run on the next round minute
+            trigger = TriggerBuilder
+                    .newTrigger()
+                    .withIdentity(pName, pGroup)
+                    // .withSchedule(CronScheduleBuilder.cronSchedule("0/50 * * * * ?")) // Each 50 seconds
+                    .withSchedule(CronScheduleBuilder.cronSchedule(pCronPattern))
+                    .withDescription(pDescription)
+                    .usingJobData("sendEmail", Boolean.TRUE)
+                    .build();
+            return this;
+        }
     }
 }
