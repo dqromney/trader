@@ -1,28 +1,18 @@
 package iag1.com;
 
-import iag1.com.analytics.Technical;
 import iag1.com.job.RsiReportJob;
-import iag1.com.model.Bar;
-import iag1.com.model.Item;
-import iag1.com.service.DataService;
-import iag1.com.types.SortOrder;
-import iag1.com.types.TechnicalEnums;
-import iag1.com.utils.Email;
-import iag1.com.utils.Report;
-import iag1.com.utils.WatchList;
 import jargs.gnu.CmdLineParser;
+import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
-import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -62,50 +52,44 @@ public class Main {
         main.registerJobs();
     }
 
+    /**
+     * Register cron-job jobs.
+     *
+     * @throws SchedulerException if there is a problem.
+     */
     private void registerJobs() throws SchedulerException {
+        Scheduler scheduler = new StdSchedulerFactory().getScheduler();
+
         // Define the RSI Report job
         JobDetail job = JobBuilder.newJob(RsiReportJob.class).withIdentity("rsiReportJob", "reports").build();
         // Trigger the job to run on the next round minute
         Trigger trigger = TriggerBuilder
                 .newTrigger()
                 .withIdentity("rsiReport", "reports")
-                .withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(300).repeatForever())
+                // .withSchedule(CronScheduleBuilder.cronSchedule("0/50 * * * * ?")) // Each 50 seconds
+                .withSchedule(CronScheduleBuilder.cronSchedule("0 * * ? * MON-FRI")) // Each Mon-Fri at midnight
+                .withDescription("Retrieves wish-list data, calculates RSI, and emails report.") // TEST
+                .usingJobData("sendEmail", Boolean.TRUE)
                 .build();
         // Schedule the job
-        Scheduler scheduler = new StdSchedulerFactory().getScheduler();
         scheduler.start();
         scheduler.scheduleJob(job, trigger);
     }
 
     /**
-     * Email RSI Report.
+     * Initialize the application.
      *
-     * @throws IOException
-     * @throws ParseException
+     * @param args the {@link String[]}commend line arguments.
      */
-    private void emailRsiReport() throws IOException, ParseException {
-        DataService dataService = new DataService();
-        StringBuilder sb = new StringBuilder();
-        List<Bar> barList;
-        Item item;
-        sb.append("<!DOCTYPE HTML><HTML><HEADER></HEADER><BODY><TABLE style='width:100%; border: 1px solid black; border-collapse: collapse;'>");
-        for(WatchList watch: iag1.com.repository.WatchList.getWatchList()) {
-            barList = dataService.getAllHistory(watch.getSymbol(), SortOrder.ASC);
-            barList = Technical.rsi(barList, TechnicalEnums.RSI_PERIOD_AVERAGE_DEFAULT.getValue());
-            item = new Item(watch, barList);
-            System.out.print(Report.generateItem(item, 5));
-            sb.append(Report.generateHtmlItem(item, 5));
-        }
-        sb.append("</TABLE></BODY></HTML>");
-        // Email report to myself
-        Email email = new Email();
-        email.sendEmail("dqromney@gmail.com", "Daily Stock RSI Report", sb.toString());
-    }
-
     private void initialize(String[] args) {
         doArgs(args);
     }
 
+    /**
+     * Process the command-line arguments.
+     *
+     * @param args the {@link String[]}commend line arguments.
+     */
     private void doArgs(String[] args) {
         CmdLineParser parser = new CmdLineParser();
         CmdLineParser.Option option = parser.addStringOption('w', "watchlist");
@@ -118,6 +102,9 @@ public class Main {
         }
     }
 
+    /**
+     * Print application command-line usage.
+     */
     private void printUsage() {
         StringBuilder loggingLevels = new StringBuilder();
         loggingLevels.append(Level.ALL).append(" | ")
@@ -130,43 +117,4 @@ public class Main {
         System.err.println(
                 String.format("Usage java [-w -wishlist] [-l --loggingLevel <" + loggingLevels + ">]\n"));
     }
-
-    /**
-     * Gets a watch list of stocks.
-     *
-     * @return a list of {@link WatchList} objects
-     * @throws IOException
-     */
-//    private static List<WatchList> getWatchList() throws IOException, ParseException {
-//        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
-//        List<WatchList> watchList = new ArrayList<WatchList>();
-//        ReadConfig readConfig = new ReadConfig("watchList.properties");
-//        Properties props = readConfig.getPropValues();
-//        String value;
-//        for(int i = 1; i < 1000; i++) {
-//            String key = String.format("watch.list.%1$03d", i);
-//            value = (String)props.get(key);
-//            if (value != null) {
-//                // TODO Clean this up with opencsv
-//                String[] items = StringUtils.split(value, "|");
-//                // # Watch List (Symbol|Name|Exchange|EWR Issue Date[YYYY-MM-DD]|EWR Risk Level|EWR Profit Potential| EWR Payoff Period in years)
-//                WatchList wlItem = null;
-//                if(items.length == 3) {
-//                    wlItem = new WatchList.WatchListBuilder(items[0], items[1], items[2]).build();
-//                } else {
-//                    wlItem = new WatchList.WatchListBuilder(items[0], items[1], items[2])
-//                            .ewrIssueDate(items[3] == null ? null : fmt.parse(items[3]))
-//                            .ewrRiskLevel(new Double(items[4]))
-//                            .ewrProfitPotential(new Double(items[5]))
-//                            .ewrPayoffPeriod(new Double(items[6]))
-//                            .build();
-//                }
-//                watchList.add(wlItem);
-//            } else {
-//                break;
-//            }
-//        }
-//        return watchList;
-//    }
-
 }

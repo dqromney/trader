@@ -15,7 +15,9 @@ import org.quartz.JobExecutionException;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Relative Strength Index job.
@@ -24,15 +26,28 @@ import java.util.List;
  */
 public class RsiReportJob implements Job {
 
+    private Boolean sendEmail = Boolean.FALSE;
+    private static Integer SHOW_ROW_HISTORY_COUNT = 5;
+
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+        Logger logger = Logger.getLogger(RsiReportJob.class.getName());
+        logger.info(String.format("%1$s started, email enabled: [%2$s]",
+                RsiReportJob.class.getSimpleName(),
+                getSendEmail()));
+
         DataService dataService = new DataService();
         StringBuilder sb = new StringBuilder();
         List<Bar> barList;
         Item item;
-        sb.append("<!DOCTYPE HTML><HTML><HEADER></HEADER><BODY><TABLE style='width:100%; border: 1px solid black; border-collapse: collapse;'>");
+        sb.append("<!DOCTYPE HTML><HTML><HEADER></HEADER><BODY>")
+                .append("<TABLE style='width:100%; border: 1px solid black; border-collapse: collapse;'>");
+        // 14 day RSI + 5 (visible history) + 5 (extra history) + 3 days extra due to weekends and holidays.
+        Integer requiredDays = TechnicalEnums.RSI_PERIOD_AVERAGE_DEFAULT.getValue() + (2 * SHOW_ROW_HISTORY_COUNT) + 3;
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.DATE, requiredDays);
 
-        List<WatchList> watchList = null;
+        List<WatchList> watchList;
         try {
             watchList = iag1.com.repository.WatchList.getWatchList();
         } catch (IOException e) {
@@ -43,7 +58,7 @@ public class RsiReportJob implements Job {
 
         for(WatchList watch: watchList) {
             try {
-                barList = dataService.getAllHistory(watch.getSymbol(), SortOrder.ASC);
+                barList = dataService.getHistoryFromDate(watch.getSymbol(), cal.getTime(), SortOrder.ASC);
             } catch (IOException e) {
                 throw new JobExecutionException("Unable to load history data", e);
             } catch (ParseException e) {
@@ -51,17 +66,33 @@ public class RsiReportJob implements Job {
             }
             barList = Technical.rsi(barList, TechnicalEnums.RSI_PERIOD_AVERAGE_DEFAULT.getValue());
             item = new Item(watch, barList);
-            System.out.print(Report.generateItem(item, 5));
-            sb.append(Report.generateHtmlItem(item, 5));
+            // System.out.print(Report.generateItem(item, SHOW_ROW_HISTORY_COUNT));
+            sb.append(Report.generateHtmlItem(item, SHOW_ROW_HISTORY_COUNT));
         }
         sb.append("</TABLE></BODY></HTML>");
-        // Email report to myself
-        Email email = new Email();
-        try {
-            email.sendEmail("dqromney@gmail.com", "Daily Stock RSI Report", sb.toString());
-        } catch (IOException e) {
-            throw new JobExecutionException("Unable to send report email", e);
+
+        if(sendEmail) {
+            // Email report to myself
+            Email email = new Email();
+            try {
+                email.sendEmail("dqromney@gmail.com", "Daily Stock RSI Report", sb.toString());
+            } catch (IOException e) {
+                throw new JobExecutionException("Unable to send report email", e);
+            }
         }
+        logger.info(String.format("%1$s ended, email enabled: [%2$s]",
+                RsiReportJob.class.getSimpleName(),
+                getSendEmail()));
     }
 
+    // ----------------------------------------------------------------
+    // Access methods - set with .usingJobData(key, value);
+    // ----------------------------------------------------------------
+    public Boolean getSendEmail() {
+        return sendEmail;
+    }
+
+    public void setSendEmail(Boolean sendEmail) {
+        this.sendEmail = sendEmail;
+    }
 }
