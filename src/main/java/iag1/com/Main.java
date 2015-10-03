@@ -62,8 +62,8 @@ public class Main {
         RegisterJob registerJob = new RegisterJob().invoke(
                 "rsiReport",
                 "reports",
-                // "0 * * ? * MON-FRI", //Each Mon-Fri at midnight
-                "0 0/1 * * * ?", // Every 2 minutes
+                "0 * * ? * MON-FRI", //Each Mon-Fri at midnight
+                // "0 0/1 * * * ?", // Every 2 minutes
                 "Retrieves wish-list data, calculates RSI, and emails report.");
         JobDetail job = registerJob.getJob();
         Trigger trigger = registerJob.getTrigger();
