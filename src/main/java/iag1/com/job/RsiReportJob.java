@@ -46,7 +46,7 @@ public class RsiReportJob implements Job {
         // 14 day RSI + 5 (visible history) + 5 (extra history) + 3 days extra due to weekends and holidays.
         Integer requiredDays = TechnicalEnums.RSI_PERIOD_AVERAGE_DEFAULT.getValue() + (2 * SHOW_ROW_HISTORY_COUNT) + 3;
         Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.DATE, -1*requiredDays);
+        cal.add(Calendar.DATE, (-1 * requiredDays));
         Date fromDate = cal.getTime();
 
         List<WatchList> watchList;

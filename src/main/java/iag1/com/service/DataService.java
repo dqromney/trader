@@ -63,4 +63,26 @@ public class DataService implements IDataService {
 
         return barList;
     }
+
+    public List<Bar> getHistoryFromToDate(String pSymbol, Date pFromDate, Date pToDate, SortOrder pDateSortOrder) throws IOException, ParseException {
+        List<Bar> barList = endOfDay.fromToDate(pSymbol, pFromDate, pToDate);
+        if (pDateSortOrder.equals(SortOrder.DESC)) {
+            // Sort by date in descending order
+            barList.sort(new Comparator<Bar>() {
+                public int compare(Bar o2, Bar o1) {
+                    return o1.getDate().compareTo(o2.getDate());
+                }
+            });
+        } else {
+            // Sort by date in ascending order
+            barList.sort(new Comparator<Bar>() {
+                public int compare(Bar o1, Bar o2) {
+                    return o1.getDate().compareTo(o2.getDate());
+                }
+            });
+        }
+
+        return barList;
+    }
+
 }
