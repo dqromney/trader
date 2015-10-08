@@ -67,6 +67,7 @@ public class RsiReportJob implements Job {
                 throw new JobExecutionException("Unable to parse history data", e);
             }
             barList = Technical.rsi(barList, TechnicalEnums.RSI_PERIOD_AVERAGE_DEFAULT.getValue());
+            barList = Technical.sma(barList, TechnicalEnums.SMA_PERIOD_AVERAGE_DEFAULT.getValue());
             item = new Item(watch, barList);
             System.out.print(".");
             System.out.print(Report.generateItem(item, SHOW_ROW_HISTORY_COUNT));

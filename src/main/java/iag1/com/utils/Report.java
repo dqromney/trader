@@ -34,7 +34,7 @@ public class Report {
                 watchList.getEwrRiskLevel() == null ? 0.0 : watchList.getEwrRiskLevel(),
                 watchList.getEwrPayoffPeriod() == null ? 0.0 : watchList.getEwrPayoffPeriod()));
         sb.append(
-                String.format("%1$s\t\t%2$s\t%3$s\t%4$s\t\t%5$s\t%6$s\t%7$s\t%8$s\n",
+                String.format("%1$s\t\t%2$s\t%3$s\t%4$s\t\t%5$s\t%6$s\t%7$s\t%8$s\t\t%9$s\n",
                         AppConfig.YAHOO_EOD_HEADER_DATE.getValue(),
                         AppConfig.YAHOO_EOD_HEADER_OPEN.getValue(),
                         AppConfig.YAHOO_EOD_HEADER_HIGH.getValue(),
@@ -42,7 +42,8 @@ public class Report {
                         AppConfig.YAHOO_EOD_HEADER_CLOSE.getValue(),
                         AppConfig.YAHOO_EOD_HEADER_VOLUME.getValue(),
                         AppConfig.YAHOO_EOD_HEADER_ADJ_CLOSE.getValue(),
-                        AppConfig.YAHOO_EOD_HEADER_RSI.getValue())
+                        AppConfig.YAHOO_EOD_HEADER_RSI.getValue(),
+                        AppConfig.YAHOO_EOD_HEADER_SMA.getValue())
         );
         int count = pLength;
         for(Bar bar: pItem.getBars()) {
@@ -56,7 +57,8 @@ public class Report {
             sb.append(String.format("%1$.2f", bar.getClose()) + "\t");
             sb.append(String.format("%1$6d", bar.getVolume()) + "\t");
             sb.append(String.format("%1$.2f", bar.getAdjClose()) + "\t\t");
-            sb.append(String.format("%1$.2f", bar.getRsi()) + "\n");
+            sb.append(String.format("%1$.2f", bar.getRsi()) + "\t");
+            sb.append(String.format("%1$.2f", bar.getSma()) + "\n");
         }
         return sb.toString();
     }
@@ -73,16 +75,16 @@ public class Report {
         });
         WatchList watchList = pItem.getWatchList();
 
-        sb.append(String.format("<TR align='left'><TH colspan='8' >%1$s - %2$s (%3$s) - %4$d Bars</TH></TR>\n",
+        sb.append(String.format("<TR align='left'><TH colspan='9' >%1$s - %2$s (%3$s) - %4$d Bars</TH></TR>\n",
                 pItem.getSymbol(), pItem.getName(), pItem.getExchange(), pItem.getBars().size()));
-        sb.append(String.format("<TR align='left'><TH colspan='8' >EWR Issue: %1tY-%1$tm Profit Potential: %2$1.0f%% Risk Level[1(safest)-5]: %3$1.2f Payoff Period (years): %4$1.2f</TH></TR>",
+        sb.append(String.format("<TR align='left'><TH colspan='9' >EWR Issue: %1tY-%1$tm Profit Potential: %2$1.0f%% Risk Level[1(safest)-5]: %3$1.2f Payoff Period (years): %4$1.2f</TH></TR>",
                 watchList.getEwrIssueDate() == null ? new Date() : watchList.getEwrIssueDate(),
                 watchList.getEwrProfitPotential() == null ? 0.0 : watchList.getEwrProfitPotential(),
                 watchList.getEwrRiskLevel() == null ? 0.0 : watchList.getEwrRiskLevel(),
                 watchList.getEwrPayoffPeriod() == null ? 0.0 : watchList.getEwrPayoffPeriod()));
         sb.append("<TR style='border: 1px solid black; border-collapse: collapse;'>");
         sb.append(
-                String.format("<TH>%1$s</TH><TH>%2$s</TH><TH>%3$s</TH><TH>%4$s</TH><TH>%5$s</TH><TH>%6$s</TH><TH>%7$s</TH><TH>%8$s</TH>",
+                String.format("<TH>%1$s</TH><TH>%2$s</TH><TH>%3$s</TH><TH>%4$s</TH><TH>%5$s</TH><TH>%6$s</TH><TH>%7$s</TH><TH>%8$s</TH><TH>%9$s</TH>",
                         AppConfig.YAHOO_EOD_HEADER_DATE.getValue(),
                         AppConfig.YAHOO_EOD_HEADER_OPEN.getValue(),
                         AppConfig.YAHOO_EOD_HEADER_HIGH.getValue(),
@@ -90,49 +92,31 @@ public class Report {
                         AppConfig.YAHOO_EOD_HEADER_CLOSE.getValue(),
                         AppConfig.YAHOO_EOD_HEADER_VOLUME.getValue(),
                         AppConfig.YAHOO_EOD_HEADER_ADJ_CLOSE.getValue(),
-                        AppConfig.YAHOO_EOD_HEADER_RSI.getValue())
+                        AppConfig.YAHOO_EOD_HEADER_RSI.getValue(),
+                        AppConfig.YAHOO_EOD_HEADER_SMA.getValue())
         );
         sb.append("</TR>\n");
 
         int count = pLength;
+        Double previousSma = 0.0;
         for(Bar bar: pItem.getBars()) {
             if (--count < 0) {
                 break;
             }
-            if(bar.getRsi() < 40.0) {
-                sb.append("<TR style='border: 1px solid black; border-collapse: collapse; color:red'><TD>");
-                sb.append(fmt.format(bar.getDate())+"</TD><TD align='right'>");
-                sb.append(String.format("%1$.2f", bar.getOpen()) + "</TD><TD align='right'>");
-                sb.append(String.format("%1$.2f", bar.getHigh()) + "</TD><TD align='right'>");
-                sb.append(String.format("%1$.2f", bar.getLow()) + "</TD><TD align='right'>");
-                sb.append(String.format("%1$.2f", bar.getClose()) + "</TD><TD align='right'>");
-                sb.append(String.format("%1$6d", bar.getVolume()) + "</TD><TD align='right'>");
-                sb.append(String.format("%1$.2f", bar.getAdjClose()) + "</TD><TD align='right'>");
-                sb.append(String.format("%1$.2f", bar.getRsi()) + "</TD>");
-                sb.append("</TR>\n");
-            } else if (bar.getRsi() > 60) {
-                sb.append("<TR style='border: 1px solid black; border-collapse: collapse; color:blue'><TD>");
-                sb.append(fmt.format(bar.getDate())+"</TD><TD align='right'>");
-                sb.append(String.format("%1$.2f", bar.getOpen()) + "</TD><TD align='right'>");
-                sb.append(String.format("%1$.2f", bar.getHigh()) + "</TD><TD align='right'>");
-                sb.append(String.format("%1$.2f", bar.getLow()) + "</TD><TD align='right'>");
-                sb.append(String.format("%1$.2f", bar.getClose()) + "</TD><TD align='right'>");
-                sb.append(String.format("%1$6d", bar.getVolume()) + "</TD><TD align='right'>");
-                sb.append(String.format("%1$.2f", bar.getAdjClose()) + "</TD><TD align='right'>");
-                sb.append(String.format("%1$.2f", bar.getRsi()) + "</TD>");
-                sb.append("</TR>\n");
-            } else {
-                sb.append("<TR style='border: 1px solid black; border-collapse: collapse;'><TD>");
-                sb.append(fmt.format(bar.getDate())+"</TD><TD align='right'>");
-                sb.append(String.format("%1$.2f", bar.getOpen()) + "</TD><TD align='right'>");
-                sb.append(String.format("%1$.2f", bar.getHigh()) + "</TD><TD align='right'>");
-                sb.append(String.format("%1$.2f", bar.getLow()) + "</TD><TD align='right'>");
-                sb.append(String.format("%1$.2f", bar.getClose()) + "</TD><TD align='right'>");
-                sb.append(String.format("%1$6d", bar.getVolume()) + "</TD><TD align='right'>");
-                sb.append(String.format("%1$.2f", bar.getAdjClose()) + "</TD><TD align='right'>");
-                sb.append(String.format("%1$.2f", bar.getRsi()) + "</TD>");
-                sb.append("</TR>\n");
-            }
+            sb.append("<TR style='border: 1px solid black; border-collapse: collapse;'>");
+            sb.append(String.format("<TD>%1$s</TD>", fmt.format(bar.getDate())));
+            sb.append(String.format("<TD align='right'>%1$.2f</TD>", bar.getOpen()));
+            sb.append(String.format("<TD align='right'>%1$.2f</TD>", bar.getHigh()));
+            sb.append(String.format("<TD align='right'>%1$.2f</TD>", bar.getLow()));
+            sb.append(String.format("<TD align='right'>%1$.2f</TD>", bar.getClose()));
+            sb.append(String.format("<TD align='right'>%1$6d</TD>", bar.getVolume()));
+            sb.append(String.format("<TD align='right'>%1$.2f</TD>", bar.getAdjClose()));
+            sb.append(String.format("<TD align='right' style='color:%1$s;'>%2$.2f</TD>",
+                    bar.getRsi() < 40.0 ? "red" : bar.getRsi() > 60.0 ? "blue" : "black", bar.getRsi()));
+            sb.append(String.format("<TD align='right' style='color:%1$s;'>%2$.2f</TD>",
+                    bar.getSma() >= previousSma ? "red" : bar.getSma() < previousSma ? "blue" : "black", bar.getSma()));
+            sb.append("</TR>\n");
+            previousSma = bar.getSma();
         }
         return sb.toString();
     }

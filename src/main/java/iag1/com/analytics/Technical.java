@@ -53,4 +53,35 @@ public class Technical {
 
         return pBarList;
     }
+
+    // Simple Moving Average
+    public static List<Bar> sma(List<Bar> pBarList, Integer pPeriodAverage) {
+        MInteger begin = new MInteger();
+        MInteger length = new MInteger();
+        double[] closePrice = new double[pBarList.size()];
+        double[] out = new double[pBarList.size()];
+
+        // Populate the closing price array
+        for (int i = 0; i < pBarList.size(); i++) {
+            closePrice[i] = pBarList.get(i).getClose();
+        }
+
+        // Set default to 14 day average
+        if(pPeriodAverage == null) {
+            pPeriodAverage = TechnicalEnums.RSI_PERIOD_AVERAGE_DEFAULT.getValue();
+        }
+
+        Core core = new Core();
+        RetCode retCode = core.sma(0, pBarList.size() - 1, closePrice, pPeriodAverage, begin, length, out);
+        if (retCode == RetCode.Success) {
+            // Apply technical to bar list
+            for (int i = begin.value; i < closePrice.length; i++) {
+                pBarList.get(i).setSma(out[i - begin.value]);
+            }
+        } else {
+            System.out.println(String.format("Error: %1$s", RetCode.AllocErr.name()));
+        }
+
+        return pBarList;
+    }
 }

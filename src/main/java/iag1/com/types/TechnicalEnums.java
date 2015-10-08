@@ -5,6 +5,7 @@ package iag1.com.types;
  */
 public enum TechnicalEnums {
     RSI_PERIOD_AVERAGE_DEFAULT(14)
+    ,SMA_PERIOD_AVERAGE_DEFAULT(14)
     ;
 
     private Integer value;

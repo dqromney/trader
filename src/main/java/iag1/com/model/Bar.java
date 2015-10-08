@@ -1,6 +1,5 @@
 package iag1.com.model;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -16,8 +15,10 @@ public class Bar {
     private Double close;
     private Long volume;
     private Double adjClose;
-
+    // Relative Strength Index
     private Double rsi;
+    // Simple Moving Average
+    private Double sma;
 
     public Bar() {
         // Empty
@@ -101,11 +102,18 @@ public class Bar {
         this.rsi = rsi;
     }
 
+    public Double getSma() {
+        return sma;
+    }
+
+    public void setSma(Double sma) {
+        this.sma = sma;
+    }
+
     @Override
     public String toString() {
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
         final StringBuilder sb = new StringBuilder("Bar{");
-        sb.append("date=").append(fmt.format(date));
+        sb.append("date=").append(date);
         sb.append(", open=").append(open);
         sb.append(", high=").append(high);
         sb.append(", low=").append(low);
@@ -113,6 +121,7 @@ public class Bar {
         sb.append(", volume=").append(volume);
         sb.append(", adjClose=").append(adjClose);
         sb.append(", rsi=").append(rsi);
+        sb.append(", sma=").append(sma);
         sb.append('}');
         return sb.toString();
     }

@@ -24,6 +24,7 @@ public enum AppConfig {
     YAHOO_EOD_HEADER_VOLUME("Volume"),
     YAHOO_EOD_HEADER_ADJ_CLOSE("Adj Close"),
     YAHOO_EOD_HEADER_RSI("RSI"),
+    YAHOO_EOD_HEADER_SMA("SMA"),
     ;
 
     private String value;
