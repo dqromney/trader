@@ -2,18 +2,16 @@ package iag1.com;
 
 import iag1.com.job.RsiReportJob;
 import jargs.gnu.CmdLineParser;
-import org.quartz.CronScheduleBuilder;
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
+import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.logging.Level;
+
+import static org.quartz.CronScheduleBuilder.cronSchedule;
+import static org.quartz.JobBuilder.newJob;
+import static org.quartz.TriggerBuilder.newTrigger;
 
 /**
  * Main driver class.
@@ -58,19 +56,24 @@ public class Main {
      * @throws SchedulerException if there is a problem.
      */
     private void registerJobs() throws SchedulerException {
-        Scheduler scheduler = new StdSchedulerFactory().getScheduler();
-        RegisterJob registerJob = new RegisterJob().invoke(
-                "rsiReport",
-                "reports",
-                "0 0 * * 1-5 ?", //Each Mon-Fri at midnight
-                // "0 0/2 * * * ?", // Every 1 minutes
-                "Retrieves wish-list data, calculates RSI, and emails report.");
-        JobDetail job = registerJob.getJob();
-        Trigger trigger = registerJob.getTrigger();
+        SchedulerFactory sf = new StdSchedulerFactory();
+        Scheduler scheduler = sf.getScheduler();
+
+        JobDetail job = newJob(RsiReportJob.class)
+            .withIdentity("dailyStockReport", "stockReports")
+            .build();
+
+        CronTrigger trigger = newTrigger()
+            .withIdentity("dailyStockReportTrigger", "stockReports")
+            // .withSchedule(cronSchedule("0 38 20 * 1-7 ?"))
+            .withSchedule(cronSchedule("0 59 23 ? * SUN-FRI"))
+            .build();
 
         // Schedule the job
         scheduler.start();
         scheduler.scheduleJob(job, trigger);
+        System.out.println(scheduler.getMetaData().getSummary());
+        scheduler.getTriggerGroupNames().forEach(System.out::println);
     }
 
     /**
@@ -132,13 +135,13 @@ public class Main {
 
         public RegisterJob invoke(String pName, String pGroup, String pCronPattern, String pDescription) {
             // Define the RSI Report job
-            job = JobBuilder.newJob(RsiReportJob.class).withIdentity(pName, pGroup).build();
+            job = newJob(RsiReportJob.class).withIdentity(pName, pGroup).build();
             // Trigger the job to run on the next round minute
-            trigger = TriggerBuilder
-                    .newTrigger()
+            trigger =
+                    newTrigger()
                     .withIdentity(pName, pGroup)
                     // .withSchedule(CronScheduleBuilder.cronSchedule("0/50 * * * * ?")) // Each 50 seconds
-                    .withSchedule(CronScheduleBuilder.cronSchedule(pCronPattern))
+                    .withSchedule(cronSchedule(pCronPattern))
                     .withDescription(pDescription)
                     .usingJobData("sendEmail", Boolean.TRUE)
                     .build();
