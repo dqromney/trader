@@ -65,8 +65,9 @@ public class Main {
 
         CronTrigger trigger = newTrigger()
             .withIdentity("dailyStockReportTrigger", "stockReports")
-            // .withSchedule(cronSchedule("0 38 20 * 1-7 ?"))
+            // .withSchedule(cronSchedule("0 0/1 * ? * SUN-SAT"))
             .withSchedule(cronSchedule("0 59 23 ? * SUN-FRI"))
+            .usingJobData("sendEmail", Boolean.TRUE)
             .build();
 
         // Schedule the job
