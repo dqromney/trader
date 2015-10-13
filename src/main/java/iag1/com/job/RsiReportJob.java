@@ -44,7 +44,8 @@ public class RsiReportJob implements Job {
         sb.append("<!DOCTYPE HTML><HTML><HEADER></HEADER><BODY>")
                 .append("<TABLE style='width:100%; border: 1px solid black; border-collapse: collapse;'>");
         // 14 day RSI + 5 (visible history) + 5 (extra history) + 3 days extra due to weekends and holidays.
-        Integer requiredDays = TechnicalEnums.RSI_PERIOD_AVERAGE_DEFAULT.getValue() + (2 * SHOW_ROW_HISTORY_COUNT) + 3;
+        // Integer requiredDays = TechnicalEnums.RSI_PERIOD_AVERAGE_DEFAULT.getValue() + (2 * SHOW_ROW_HISTORY_COUNT) + 3 + 150;
+        Integer requiredDays = 52 * 7;
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, (-1 * requiredDays));
         Date fromDate = cal.getTime();
@@ -68,6 +69,9 @@ public class RsiReportJob implements Job {
             }
             barList = Technical.rsi(barList, TechnicalEnums.RSI_PERIOD_AVERAGE_DEFAULT.getValue());
             barList = Technical.sma(barList, TechnicalEnums.SMA_PERIOD_AVERAGE_DEFAULT.getValue());
+            for(Bar bar: barList) {
+                System.out.println(bar.toString());
+            }
             item = new Item(watch, barList);
             System.out.print(".");
             System.out.print(Report.generateItem(item, SHOW_ROW_HISTORY_COUNT));
