@@ -69,9 +69,9 @@ public class RsiReportJob implements Job {
             }
             barList = Technical.rsi(barList, TechnicalEnums.RSI_PERIOD_AVERAGE_DEFAULT.getValue());
             barList = Technical.sma(barList, TechnicalEnums.SMA_PERIOD_AVERAGE_DEFAULT.getValue());
-            for(Bar bar: barList) {
-                System.out.println(bar.toString());
-            }
+//            for(Bar bar: barList) {
+//                System.out.println(bar.toString());
+//            }
             item = new Item(watch, barList);
             System.out.print(".");
             System.out.print(Report.generateItem(item, SHOW_ROW_HISTORY_COUNT));
