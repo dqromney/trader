@@ -59,16 +59,10 @@ public class Main {
         SchedulerFactory sf = new StdSchedulerFactory();
         Scheduler scheduler = sf.getScheduler();
 
-        JobDetail job = newJob(RsiReportJob.class)
-            .withIdentity("dailyStockReport", "stockReports")
-            .build();
-
-        CronTrigger trigger = newTrigger()
-            .withIdentity("dailyStockReportTrigger", "stockReports")
-            //.withSchedule(cronSchedule("0 0/1 * ? * SUN-SAT"))
-            .withSchedule(cronSchedule("0 59 23 ? * SUN-FRI"))
-            .usingJobData("sendEmail", Boolean.TRUE)
-            .build();
+        // RegisterJob registerJob = new RegisterJob().invoke("dailyStockReport", "stockReports", "dailyStockReportTrigger", "0 0/1 * ? * SUN-SAT", Boolean.TRUE);
+        RegisterJob registerJob = new RegisterJob().invoke("dailyStockReport", "stockReports", "dailyStockReportTrigger", "0 59 23 ? * SUN-FRI", Boolean.TRUE);
+        JobDetail job = registerJob.getJob();
+        CronTrigger trigger = registerJob.getTrigger();
 
         // Schedule the job
         scheduler.start();
@@ -124,27 +118,26 @@ public class Main {
      */
     private class RegisterJob {
         private JobDetail job;
-        private Trigger trigger;
+        private CronTrigger trigger;
 
         public JobDetail getJob() {
             return job;
         }
 
-        public Trigger getTrigger() {
+        public CronTrigger getTrigger() {
             return trigger;
         }
 
-        public RegisterJob invoke(String pName, String pGroup, String pCronPattern, String pDescription) {
-            // Define the RSI Report job
-            job = newJob(RsiReportJob.class).withIdentity(pName, pGroup).build();
-            // Trigger the job to run on the next round minute
-            trigger =
-                    newTrigger()
+        public RegisterJob invoke(String pName, String pGroup, String pTriggerName, String pCronPattern, Boolean pSendMail) {
+            job = newJob(RsiReportJob.class)
                     .withIdentity(pName, pGroup)
-                    // .withSchedule(CronScheduleBuilder.cronSchedule("0/50 * * * * ?")) // Each 50 seconds
+                    .build();
+
+            trigger = newTrigger()
+                    .withIdentity(pTriggerName, pGroup)
+                            //.withSchedule(cronSchedule("0 0/1 * ? * SUN-SAT"))
                     .withSchedule(cronSchedule(pCronPattern))
-                    .withDescription(pDescription)
-                    .usingJobData("sendEmail", Boolean.TRUE)
+                    .usingJobData("sendEmail", pSendMail)
                     .build();
             return this;
         }
