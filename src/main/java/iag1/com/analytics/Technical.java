@@ -4,6 +4,7 @@ import com.tictactec.ta.lib.Core;
 import com.tictactec.ta.lib.MInteger;
 import com.tictactec.ta.lib.RetCode;
 import iag1.com.model.Bar;
+import iag1.com.types.Direction;
 import iag1.com.types.TechnicalEnums;
 
 import java.util.List;
@@ -82,6 +83,28 @@ public class Technical {
             System.out.println(String.format("Error: %1$s", RetCode.AllocErr.name()));
         }
 
+        return pBarList;
+    }
+
+    // Apply cycle changes to bar list, price change, volume change, etc
+    public static List<Bar> applyCycleChanges(List<Bar> pBarList) {
+        Bar prevBar = null;
+        for(Bar bar: pBarList) {
+            bar.setCloseChange(0.0);
+            if(prevBar != null) {
+                bar.setCloseChange(bar.getClose() - prevBar.getClose());
+                bar.setClosePercentChange(bar.getCloseChange() / prevBar.getClose() * 100);
+                Double rsiDiff = bar.getRsi() - prevBar.getRsi();
+                Double smaDiff = bar.getSma() - prevBar.getSma();
+                Long volumeDiff = bar.getVolume() - prevBar.getVolume();
+                bar.setRsiDirection(rsiDiff == 0.0 ? Direction.EVEN : rsiDiff > 0.0 ? Direction.UP : Direction.DOWN);
+                bar.setSmaDirection(smaDiff == 0.0 ? Direction.EVEN : smaDiff > 0.0 ? Direction.UP : Direction.DOWN);
+                bar.setVolumeChange(volumeDiff);
+                bar.setVolumeChangeDirection(volumeDiff == 0L ? Direction.EVEN : volumeDiff > 0L ? Direction.UP : Direction.DOWN);
+            }
+            prevBar = bar;
+            System.out.println(bar.toString());
+        }
         return pBarList;
     }
 }

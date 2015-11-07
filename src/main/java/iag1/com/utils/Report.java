@@ -34,16 +34,22 @@ public class Report {
                 watchList.getEwrRiskLevel() == null ? 0.0 : watchList.getEwrRiskLevel(),
                 watchList.getEwrPayoffPeriod() == null ? 0.0 : watchList.getEwrPayoffPeriod()));
         sb.append(
-                String.format("%1$s\t\t%2$s\t%3$s\t%4$s\t\t%5$s\t%6$s\t%7$s\t%8$s\t\t%9$s\n",
+                String.format("%1$s\t\t%2$s\t%3$s\t%4$s\t\t%5$s\t%6$s\t%7$s\t%8$s\t%9$s\t%10$s\t%11$s\t%12$s\t\t%13$s\t%14$s\t\t%15$s\n",
                         AppConfig.YAHOO_EOD_HEADER_DATE.getValue(),
                         AppConfig.YAHOO_EOD_HEADER_OPEN.getValue(),
                         AppConfig.YAHOO_EOD_HEADER_HIGH.getValue(),
                         AppConfig.YAHOO_EOD_HEADER_LOW.getValue(),
                         AppConfig.YAHOO_EOD_HEADER_CLOSE.getValue(),
+                        AppConfig.YAHOO_EOD_HEADER_CLOSE_CHANGE.getValue(),
+                        AppConfig.YAHOO_EOD_HEADER_CLOSE_PERCENT.getValue(),
                         AppConfig.YAHOO_EOD_HEADER_VOLUME.getValue(),
+                        AppConfig.YAHOO_EOD_HEADER_VOLUME_CHANGE.getValue(),
+                        AppConfig.YAHOO_EOD_HEADER_VOLUME_DIRECTION.getValue(),
                         AppConfig.YAHOO_EOD_HEADER_ADJ_CLOSE.getValue(),
                         AppConfig.YAHOO_EOD_HEADER_RSI.getValue(),
-                        AppConfig.YAHOO_EOD_HEADER_SMA.getValue())
+                        AppConfig.YAHOO_EOD_HEADER_RSI_DIRECTION.getValue(),
+                        AppConfig.YAHOO_EOD_HEADER_SMA.getValue(),
+                        AppConfig.YAHOO_EOD_HEADER_SMA_DIRECTION.getValue())
         );
         int count = pLength;
         for(Bar bar: pItem.getBars()) {
@@ -55,10 +61,16 @@ public class Report {
             sb.append(String.format("%1$.2f", bar.getHigh()) + "\t");
             sb.append(String.format("%1$.2f", bar.getLow()) + "\t");
             sb.append(String.format("%1$.2f", bar.getClose()) + "\t");
+            sb.append(String.format("%1$.2f", bar.getCloseChange()) + "\t\t");
+            sb.append(String.format("%1$.2f%%", bar.getClosePercentChange()) + "\t");
             sb.append(String.format("%1$6d", bar.getVolume()) + "\t");
+            sb.append(String.format("%1$6d", bar.getVolumeChange()) + "\t\t");
+            sb.append(String.format("%1$s", bar.getVolumeChangeDirection().getDirectionChar()) + "\t\t\t");
             sb.append(String.format("%1$.2f", bar.getAdjClose()) + "\t\t");
             sb.append(String.format("%1$.2f", bar.getRsi()) + "\t");
-            sb.append(String.format("%1$.2f", bar.getSma()) + "\n");
+            sb.append(String.format("%1$s", bar.getRsiDirection().getDirectionChar()) + "\t\t");
+            sb.append(String.format("%1$.2f", bar.getSma()) + "\t");
+            sb.append(String.format("%1$s", bar.getSmaDirection().getDirectionChar()) + "\n");
         }
         return sb.toString();
     }
@@ -114,7 +126,7 @@ public class Report {
             sb.append(String.format("<TD align='right' style='color:%1$s;'>%2$.2f</TD>",
                     bar.getRsi() < 40.0 ? "red" : bar.getRsi() > 60.0 ? "blue" : "black", bar.getRsi()));
             sb.append(String.format("<TD align='right' style='color:%1$s;'>%2$.2f</TD>",
-                    bar.getSma() >= previousSma ? "red" : bar.getSma() < previousSma ? "blue" : "black", bar.getSma()));
+                    bar.getSma() >= previousSma ? "red" : bar.getSma() < previousSma ? "green" : "black", bar.getSma()));
             sb.append("</TR>\n");
             previousSma = bar.getSma();
         }
