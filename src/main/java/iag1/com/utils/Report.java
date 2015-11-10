@@ -103,8 +103,8 @@ public class Report {
                         AppConfig.YAHOO_EOD_HEADER_HIGH.getValue(),
                         AppConfig.YAHOO_EOD_HEADER_LOW.getValue(),
                         AppConfig.YAHOO_EOD_HEADER_CLOSE.getValue(),
-                        AppConfig.YAHOO_EOD_HEADER_VOLUME.getValue(),
                         AppConfig.YAHOO_EOD_HEADER_ADJ_CLOSE.getValue(),
+                        AppConfig.YAHOO_EOD_HEADER_VOLUME.getValue(),
                         AppConfig.YAHOO_EOD_HEADER_RSI.getValue(),
                         AppConfig.YAHOO_EOD_HEADER_SMA.getValue())
         );
@@ -120,15 +120,22 @@ public class Report {
             sb.append(String.format("<TD align='right'>%1$.2f</TD>", bar.getOpen()));
             sb.append(String.format("<TD align='right'>%1$.2f</TD>", bar.getHigh()));
             sb.append(String.format("<TD align='right'>%1$.2f</TD>", bar.getLow()));
-            sb.append(String.format("<TD align='right'>%1$.2f</TD>", bar.getClose()));
-            sb.append(String.format("<TD align='right'>%1$6d</TD>", bar.getVolume()));
-            sb.append(String.format("<TD align='right'>%1$.2f</TD>", bar.getAdjClose()));
-            sb.append(String.format("<TD align='right' style='color:%1$s;background:%2$s;'>%3$.2f %4$s</TD>",
+            sb.append(String.format("<TD align='right' style='background: %1$s;'>%2$.2f</TD>",
+                    bar.getCloseChange() < 0.0 ? "LightPink" : bar.getCloseChange() > 0.0 ? "LightGreen" : "LightGray",
+                    bar.getClose()));
+            sb.append(String.format("<TD align='right' style='background:%1$s;'>%2$.2f</TD>",
+                    Math.abs(bar.getClose() - bar.getAdjClose()) > 0.000 ? "LightGray" : "White",
+                    bar.getAdjClose()));
+            sb.append(String.format("<TD align='right' style='background: %1$s;'>%2$s %3$6d</TD>",
+                    bar.getVolumeChangeDirection().equals(Direction.DOWN) ? "LightPink" : bar.getVolumeChangeDirection().equals(Direction.UP) ? "LightGreen" : "LightGray",
+                    bar.getVolumeChangeDirection().getEscapedHtml(),
+                    bar.getVolume()));
+            sb.append(String.format("<TD align='right' style='color:%1$s;background:%2$s;'>%4$s %3$.2f</TD>",
                     bar.getRsi() < 40.0 ? "red" : bar.getRsi() > 60.0 ? "green" : "black",
                     bar.getRsiDirection().equals(Direction.DOWN) ? "LightPink" : bar.getRsiDirection().equals(Direction.UP) ? "LightGreen" : "LightGray",
                     bar.getRsi(),
                     bar.getRsiDirection().getEscapedHtml()));
-            sb.append(String.format("<TD align='right' style='color:%1$s;'>%2$.2f %3$s</TD>",
+            sb.append(String.format("<TD align='right' style='color:%1$s;'>%3$s %2$.2f</TD>",
                     bar.getSmaDirection().equals(Direction.DOWN)  ? "red" : bar.getSmaDirection().equals(Direction.UP) ? "green" : "black",
                     bar.getSma(),
                     bar.getSmaDirection().getEscapedHtml()));
