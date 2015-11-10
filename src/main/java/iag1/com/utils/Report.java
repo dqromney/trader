@@ -3,6 +3,7 @@ package iag1.com.utils;
 import iag1.com.model.Bar;
 import iag1.com.model.Item;
 import iag1.com.types.AppConfig;
+import iag1.com.types.Direction;
 
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
@@ -110,7 +111,6 @@ public class Report {
         sb.append("</TR>\n");
 
         int count = pLength;
-        Double previousSma = 0.0;
         for(Bar bar: pItem.getBars()) {
             if (--count < 0) {
                 break;
@@ -123,12 +123,16 @@ public class Report {
             sb.append(String.format("<TD align='right'>%1$.2f</TD>", bar.getClose()));
             sb.append(String.format("<TD align='right'>%1$6d</TD>", bar.getVolume()));
             sb.append(String.format("<TD align='right'>%1$.2f</TD>", bar.getAdjClose()));
-            sb.append(String.format("<TD align='right' style='color:%1$s;'>%2$.2f</TD>",
-                    bar.getRsi() < 40.0 ? "red" : bar.getRsi() > 60.0 ? "blue" : "black", bar.getRsi()));
-            sb.append(String.format("<TD align='right' style='color:%1$s;'>%2$.2f</TD>",
-                    bar.getSma() >= previousSma ? "red" : bar.getSma() < previousSma ? "green" : "black", bar.getSma()));
+            sb.append(String.format("<TD align='right' style='color:%1$s;background:%2$s;'>%3$.2f %4$s</TD>",
+                    bar.getRsi() < 40.0 ? "red" : bar.getRsi() > 60.0 ? "green" : "black",
+                    bar.getRsiDirection().equals(Direction.DOWN) ? "LightPink" : bar.getRsiDirection().equals(Direction.UP) ? "LightGreen" : "LightGray",
+                    bar.getRsi(),
+                    bar.getRsiDirection().getEscapedHtml()));
+            sb.append(String.format("<TD align='right' style='color:%1$s;'>%2$.2f %3$s</TD>",
+                    bar.getSmaDirection().equals(Direction.DOWN)  ? "red" : bar.getSmaDirection().equals(Direction.UP) ? "green" : "black",
+                    bar.getSma(),
+                    bar.getSmaDirection().getEscapedHtml()));
             sb.append("</TR>\n");
-            previousSma = bar.getSma();
         }
         return sb.toString();
     }
