@@ -6,20 +6,21 @@ package iag1.com.types;
  * Created by dqromney on 11/6/15.
  */
 public enum Direction {
-    UP('^', "#555"),
-    DOWN('v', "#555"),
-    EVEN('|', "#555"),
-    UNDEFINED(' ', "#555");
+    UP('↑', "&uarr;", "#555"),
+    DOWN('↓', "&darr;", "#555"),
+    EVEN('|', "|", "#555"),
+    UNDEFINED(' ', " ", "#555");
 
     private Character directionChar;
+    private String escapedHtml;
     private String directionRgbColor;
 
-    Direction(char pDirectionChar, String pDirectionRgbColor) {
-        this.directionChar = pDirectionChar;
-        this.directionRgbColor = pDirectionRgbColor;
+    Direction(Character directionChar, String escapedHtml, String directionRgbColor) {
+        this.directionChar = directionChar;
+        this.escapedHtml = escapedHtml;
+        this.directionRgbColor = directionRgbColor;
     }
-
-   // -----------------------------------------------------------------
+// -----------------------------------------------------------------
    // Access methods
    // -----------------------------------------------------------------
 
@@ -29,6 +30,14 @@ public enum Direction {
 
     public void setDirectionChar(Character directionChar) {
         this.directionChar = directionChar;
+    }
+
+    public String getEscapedHtml() {
+        return escapedHtml;
+    }
+
+    public void setEscapedHtml(String escapedHtml) {
+        this.escapedHtml = escapedHtml;
     }
 
     public String getDirectionRgbColor() {

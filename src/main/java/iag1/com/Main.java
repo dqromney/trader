@@ -59,8 +59,8 @@ public class Main {
         SchedulerFactory sf = new StdSchedulerFactory();
         Scheduler scheduler = sf.getScheduler();
 
-        RegisterJob registerJob = new RegisterJob().invoke("dailyStockReport", "stockReports", "dailyStockReportTrigger", "0 0/1 * ? * SUN-SAT", Boolean.FALSE);
-        // RegisterJob registerJob = new RegisterJob().invoke("dailyStockReport", "stockReports", "dailyStockReportTrigger", "0 59 23 ? * SUN-FRI", Boolean.TRUE);
+        // RegisterJob registerJob = new RegisterJob().invoke("dailyStockReport", "stockReports", "dailyStockReportTrigger", "0 0/1 * ? * SUN-SAT", Boolean.TRUE);
+        RegisterJob registerJob = new RegisterJob().invoke("dailyStockReport", "stockReports", "dailyStockReportTrigger", "0 59 23 ? * SUN-FRI", Boolean.TRUE);
         JobDetail job = registerJob.getJob();
         CronTrigger trigger = registerJob.getTrigger();
 
